@@ -15,6 +15,7 @@ import torch.nn as nn
 import torch.backends.cudnn as cudnn
 import json
 import os
+import sys
 
 from pathlib import Path
 
@@ -199,9 +200,28 @@ def get_args_parser():
     parser.add_argument('--wandb_ckpt', type=str2bool, default=False,
                         help="Save model checkpoints as W&B Artifacts.")
 
+    # Markus: downsampling the CIFAR set
+    parser.add_argument('--downsample', type=int, default=1, help="Factor of reduction of CIFAR dataset")
     return parser
 
+
+class Logger(object):
+    def __init__(self):
+        self.terminal = sys.stdout
+        self.log = open("logfile_finetune.log", "a")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+
+    def flush(self):
+        # this flush method is needed for python 3 compatibility.
+        # this handles the flush command by doing nothing.
+        # you might want to specify some extra behavior here.
+        pass
+
 def main(args):
+    sys.stdout = Logger() # Markus: Output to console and to a log file
     utils.init_distributed_mode(args)
     print(args)
     device = torch.device(args.device)

@@ -7,6 +7,8 @@
 
 
 import os
+
+import torch.utils.data
 from torchvision import datasets, transforms
 
 from timm.data.constants import \
@@ -28,8 +30,11 @@ def build_dataset(is_train, args):
     print("---------------------------")
 
     if args.data_set == 'CIFAR':
-        dataset = datasets.CIFAR100(args.data_path, train=is_train, transform=transform, download=True)
-        nb_classes = 100
+        # Markus CIFAR10 statt CIFAR100 verwenden + downsampling
+        dataset = datasets.CIFAR10(args.data_path, train=is_train, transform=transform, download=True)
+        sample = list(range(0, len(dataset), args.downsample))
+        dataset = torch.utils.data.Subset(dataset, sample)
+        nb_classes = 10
     elif args.data_set == 'IMNET':
         print("reading from datapath", args.data_path)
         root = os.path.join(args.data_path, 'train' if is_train else 'val')

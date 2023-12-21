@@ -1,0 +1,2256 @@
+Not using distributed mode
+Namespace(batch_size=64, epochs=10, update_freq=1, model='convnext_tiny', drop_path=0, input_size=224, layer_scale_init_value=1e-06, model_ema=False, model_ema_decay=0.9999, model_ema_force_cpu=False, model_ema_eval=False, opt='adamw', opt_eps=1e-08, opt_betas=None, clip_grad=None, momentum=0.9, weight_decay=0.05, weight_decay_end=None, lr=0.004, layer_decay=1.0, min_lr=1e-06, warmup_epochs=0, warmup_steps=-1, color_jitter=0.4, aa='rand-m9-mstd0.5-inc1', smoothing=0.1, train_interpolation='bicubic', crop_pct=None, reprob=0.25, remode='pixel', recount=1, resplit=False, mixup=0.8, cutmix=1.0, cutmix_minmax=None, mixup_prob=1.0, mixup_switch_prob=0.5, mixup_mode='batch', finetune='https://dl.fbaipublicfiles.com/convnext/convnext_tiny_1k_224_ema.pth', head_init_scale=1.0, model_key='model|module', model_prefix='', data_path='dataset', eval_data_path=None, nb_classes=1000, imagenet_default_mean_and_std=True, data_set='CIFAR', output_dir='network', log_dir=None, device='cuda', seed=0, resume='', auto_resume=True, save_ckpt=True, save_ckpt_freq=1, save_ckpt_num=3, start_epoch=0, eval=False, dist_eval=True, disable_eval=False, num_workers=8, pin_mem=True, world_size=1, local_rank=-1, dist_on_itp=False, dist_url='env://', use_amp=False, enable_wandb=False, project='convnext', wandb_ckpt=False, downsample=10, distributed=False)
+Transform = 
+RandomResizedCropAndInterpolation(size=(224, 224), scale=(0.08, 1.0), ratio=(0.75, 1.3333), interpolation=PIL.Image.BICUBIC)
+RandomHorizontalFlip(p=0.5)
+<timm.data.auto_augment.RandAugment object at 0x7fdb8a840250>
+ToTensor()
+Normalize(mean=tensor([0.4850, 0.4560, 0.4060]), std=tensor([0.2290, 0.2240, 0.2250]))
+<timm.data.random_erasing.RandomErasing object at 0x7fdb8a840af0>
+---------------------------
+Files already downloaded and verified
+Number of the class = 10
+Transform = 
+Resize(size=256, interpolation=bicubic, max_size=None, antialias=None)
+CenterCrop(size=(224, 224))
+ToTensor()
+Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+---------------------------
+Files already downloaded and verified
+Number of the class = 10
+Sampler_train = <torch.utils.data.distributed.DistributedSampler object at 0x7fdc0568c5e0>
+Mixup is activated!
+Load ckpt from https://dl.fbaipublicfiles.com/convnext/convnext_tiny_1k_224_ema.pth
+Load state_dict by model_key = model
+Removing key head.weight from pretrained checkpoint
+Removing key head.bias from pretrained checkpoint
+Weights of ConvNeXt not initialized from pretrained model: ['head.weight', 'head.bias']
+Model = ConvNeXt(
+  (downsample_layers): ModuleList(
+    (0): Sequential(
+      (0): Conv2d(3, 96, kernel_size=(4, 4), stride=(4, 4))
+      (1): LayerNorm()
+    )
+    (1): Sequential(
+      (0): LayerNorm()
+      (1): Conv2d(96, 192, kernel_size=(2, 2), stride=(2, 2))
+    )
+    (2): Sequential(
+      (0): LayerNorm()
+      (1): Conv2d(192, 384, kernel_size=(2, 2), stride=(2, 2))
+    )
+    (3): Sequential(
+      (0): LayerNorm()
+      (1): Conv2d(384, 768, kernel_size=(2, 2), stride=(2, 2))
+    )
+  )
+  (stages): ModuleList(
+    (0): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(96, 96, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=96)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=96, out_features=384, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=384, out_features=96, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(96, 96, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=96)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=96, out_features=384, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=384, out_features=96, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(96, 96, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=96)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=96, out_features=384, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=384, out_features=96, bias=True)
+        (drop_path): Identity()
+      )
+    )
+    (1): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(192, 192, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=192)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=192, out_features=768, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=768, out_features=192, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(192, 192, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=192)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=192, out_features=768, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=768, out_features=192, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(192, 192, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=192)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=192, out_features=768, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=768, out_features=192, bias=True)
+        (drop_path): Identity()
+      )
+    )
+    (2): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (3): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (4): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (5): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (6): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (7): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (8): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+    )
+    (3): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(768, 768, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=768)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=768, out_features=3072, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=3072, out_features=768, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(768, 768, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=768)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=768, out_features=3072, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=3072, out_features=768, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(768, 768, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=768)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=768, out_features=3072, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=3072, out_features=768, bias=True)
+        (drop_path): Identity()
+      )
+    )
+  )
+  (norm): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+  (head): Linear(in_features=768, out_features=10, bias=True)
+)
+number of params: 27827818
+LR = 0.00400000
+Batch size = 64
+Update frequent = 1
+Number of training examples = 1250
+Number of training training per epoch = 19
+Param groups = {
+  "decay": {
+    "weight_decay": 0.05,
+    "params": [
+      "downsample_layers.0.0.weight",
+      "downsample_layers.1.1.weight",
+      "downsample_layers.2.1.weight",
+      "downsample_layers.3.1.weight",
+      "stages.0.0.dwconv.weight",
+      "stages.0.0.pwconv1.weight",
+      "stages.0.0.pwconv2.weight",
+      "stages.0.1.dwconv.weight",
+      "stages.0.1.pwconv1.weight",
+      "stages.0.1.pwconv2.weight",
+      "stages.0.2.dwconv.weight",
+      "stages.0.2.pwconv1.weight",
+      "stages.0.2.pwconv2.weight",
+      "stages.1.0.dwconv.weight",
+      "stages.1.0.pwconv1.weight",
+      "stages.1.0.pwconv2.weight",
+      "stages.1.1.dwconv.weight",
+      "stages.1.1.pwconv1.weight",
+      "stages.1.1.pwconv2.weight",
+      "stages.1.2.dwconv.weight",
+      "stages.1.2.pwconv1.weight",
+      "stages.1.2.pwconv2.weight",
+      "stages.2.0.dwconv.weight",
+      "stages.2.0.pwconv1.weight",
+      "stages.2.0.pwconv2.weight",
+      "stages.2.1.dwconv.weight",
+      "stages.2.1.pwconv1.weight",
+      "stages.2.1.pwconv2.weight",
+      "stages.2.2.dwconv.weight",
+      "stages.2.2.pwconv1.weight",
+      "stages.2.2.pwconv2.weight",
+      "stages.2.3.dwconv.weight",
+      "stages.2.3.pwconv1.weight",
+      "stages.2.3.pwconv2.weight",
+      "stages.2.4.dwconv.weight",
+      "stages.2.4.pwconv1.weight",
+      "stages.2.4.pwconv2.weight",
+      "stages.2.5.dwconv.weight",
+      "stages.2.5.pwconv1.weight",
+      "stages.2.5.pwconv2.weight",
+      "stages.2.6.dwconv.weight",
+      "stages.2.6.pwconv1.weight",
+      "stages.2.6.pwconv2.weight",
+      "stages.2.7.dwconv.weight",
+      "stages.2.7.pwconv1.weight",
+      "stages.2.7.pwconv2.weight",
+      "stages.2.8.dwconv.weight",
+      "stages.2.8.pwconv1.weight",
+      "stages.2.8.pwconv2.weight",
+      "stages.3.0.dwconv.weight",
+      "stages.3.0.pwconv1.weight",
+      "stages.3.0.pwconv2.weight",
+      "stages.3.1.dwconv.weight",
+      "stages.3.1.pwconv1.weight",
+      "stages.3.1.pwconv2.weight",
+      "stages.3.2.dwconv.weight",
+      "stages.3.2.pwconv1.weight",
+      "stages.3.2.pwconv2.weight",
+      "head.weight"
+    ],
+    "lr_scale": 1.0
+  },
+  "no_decay": {
+    "weight_decay": 0.0,
+    "params": [
+      "downsample_layers.0.0.bias",
+      "downsample_layers.0.1.weight",
+      "downsample_layers.0.1.bias",
+      "downsample_layers.1.0.weight",
+      "downsample_layers.1.0.bias",
+      "downsample_layers.1.1.bias",
+      "downsample_layers.2.0.weight",
+      "downsample_layers.2.0.bias",
+      "downsample_layers.2.1.bias",
+      "downsample_layers.3.0.weight",
+      "downsample_layers.3.0.bias",
+      "downsample_layers.3.1.bias",
+      "stages.0.0.gamma",
+      "stages.0.0.dwconv.bias",
+      "stages.0.0.norm.weight",
+      "stages.0.0.norm.bias",
+      "stages.0.0.pwconv1.bias",
+      "stages.0.0.pwconv2.bias",
+      "stages.0.1.gamma",
+      "stages.0.1.dwconv.bias",
+      "stages.0.1.norm.weight",
+      "stages.0.1.norm.bias",
+      "stages.0.1.pwconv1.bias",
+      "stages.0.1.pwconv2.bias",
+      "stages.0.2.gamma",
+      "stages.0.2.dwconv.bias",
+      "stages.0.2.norm.weight",
+      "stages.0.2.norm.bias",
+      "stages.0.2.pwconv1.bias",
+      "stages.0.2.pwconv2.bias",
+      "stages.1.0.gamma",
+      "stages.1.0.dwconv.bias",
+      "stages.1.0.norm.weight",
+      "stages.1.0.norm.bias",
+      "stages.1.0.pwconv1.bias",
+      "stages.1.0.pwconv2.bias",
+      "stages.1.1.gamma",
+      "stages.1.1.dwconv.bias",
+      "stages.1.1.norm.weight",
+      "stages.1.1.norm.bias",
+      "stages.1.1.pwconv1.bias",
+      "stages.1.1.pwconv2.bias",
+      "stages.1.2.gamma",
+      "stages.1.2.dwconv.bias",
+      "stages.1.2.norm.weight",
+      "stages.1.2.norm.bias",
+      "stages.1.2.pwconv1.bias",
+      "stages.1.2.pwconv2.bias",
+      "stages.2.0.gamma",
+      "stages.2.0.dwconv.bias",
+      "stages.2.0.norm.weight",
+      "stages.2.0.norm.bias",
+      "stages.2.0.pwconv1.bias",
+      "stages.2.0.pwconv2.bias",
+      "stages.2.1.gamma",
+      "stages.2.1.dwconv.bias",
+      "stages.2.1.norm.weight",
+      "stages.2.1.norm.bias",
+      "stages.2.1.pwconv1.bias",
+      "stages.2.1.pwconv2.bias",
+      "stages.2.2.gamma",
+      "stages.2.2.dwconv.bias",
+      "stages.2.2.norm.weight",
+      "stages.2.2.norm.bias",
+      "stages.2.2.pwconv1.bias",
+      "stages.2.2.pwconv2.bias",
+      "stages.2.3.gamma",
+      "stages.2.3.dwconv.bias",
+      "stages.2.3.norm.weight",
+      "stages.2.3.norm.bias",
+      "stages.2.3.pwconv1.bias",
+      "stages.2.3.pwconv2.bias",
+      "stages.2.4.gamma",
+      "stages.2.4.dwconv.bias",
+      "stages.2.4.norm.weight",
+      "stages.2.4.norm.bias",
+      "stages.2.4.pwconv1.bias",
+      "stages.2.4.pwconv2.bias",
+      "stages.2.5.gamma",
+      "stages.2.5.dwconv.bias",
+      "stages.2.5.norm.weight",
+      "stages.2.5.norm.bias",
+      "stages.2.5.pwconv1.bias",
+      "stages.2.5.pwconv2.bias",
+      "stages.2.6.gamma",
+      "stages.2.6.dwconv.bias",
+      "stages.2.6.norm.weight",
+      "stages.2.6.norm.bias",
+      "stages.2.6.pwconv1.bias",
+      "stages.2.6.pwconv2.bias",
+      "stages.2.7.gamma",
+      "stages.2.7.dwconv.bias",
+      "stages.2.7.norm.weight",
+      "stages.2.7.norm.bias",
+      "stages.2.7.pwconv1.bias",
+      "stages.2.7.pwconv2.bias",
+      "stages.2.8.gamma",
+      "stages.2.8.dwconv.bias",
+      "stages.2.8.norm.weight",
+      "stages.2.8.norm.bias",
+      "stages.2.8.pwconv1.bias",
+      "stages.2.8.pwconv2.bias",
+      "stages.3.0.gamma",
+      "stages.3.0.dwconv.bias",
+      "stages.3.0.norm.weight",
+      "stages.3.0.norm.bias",
+      "stages.3.0.pwconv1.bias",
+      "stages.3.0.pwconv2.bias",
+      "stages.3.1.gamma",
+      "stages.3.1.dwconv.bias",
+      "stages.3.1.norm.weight",
+      "stages.3.1.norm.bias",
+      "stages.3.1.pwconv1.bias",
+      "stages.3.1.pwconv2.bias",
+      "stages.3.2.gamma",
+      "stages.3.2.dwconv.bias",
+      "stages.3.2.norm.weight",
+      "stages.3.2.norm.bias",
+      "stages.3.2.pwconv1.bias",
+      "stages.3.2.pwconv2.bias",
+      "norm.weight",
+      "norm.bias",
+      "head.bias"
+    ],
+    "lr_scale": 1.0
+  }
+}
+Use Cosine LR scheduler
+Set warmup steps = 0
+Set warmup steps = 0
+Max WD = 0.0500000, Min WD = 0.0500000
+criterion = SoftTargetCrossEntropy()
+Auto resume checkpoint: 
+Start training for 10 epochs
+Not using distributed mode
+Namespace(batch_size=64, epochs=10, update_freq=1, model='convnext_tiny', drop_path=0, input_size=224, layer_scale_init_value=1e-06, model_ema=False, model_ema_decay=0.9999, model_ema_force_cpu=False, model_ema_eval=False, opt='adamw', opt_eps=1e-08, opt_betas=None, clip_grad=None, momentum=0.9, weight_decay=0.05, weight_decay_end=None, lr=0.004, layer_decay=1.0, min_lr=1e-06, warmup_epochs=0, warmup_steps=-1, color_jitter=0.4, aa='rand-m9-mstd0.5-inc1', smoothing=0.1, train_interpolation='bicubic', crop_pct=None, reprob=0.25, remode='pixel', recount=1, resplit=False, mixup=0.8, cutmix=1.0, cutmix_minmax=None, mixup_prob=1.0, mixup_switch_prob=0.5, mixup_mode='batch', finetune='https://dl.fbaipublicfiles.com/convnext/convnext_tiny_1k_224_ema.pth', head_init_scale=1.0, model_key='model|module', model_prefix='', data_path='dataset', eval_data_path=None, nb_classes=1000, imagenet_default_mean_and_std=True, data_set='CIFAR', output_dir='network', log_dir=None, device='cuda', seed=0, resume='', auto_resume=True, save_ckpt=True, save_ckpt_freq=1, save_ckpt_num=3, start_epoch=0, eval=False, dist_eval=True, disable_eval=False, num_workers=8, pin_mem=True, world_size=1, local_rank=-1, dist_on_itp=False, dist_url='env://', use_amp=False, enable_wandb=False, project='convnext', wandb_ckpt=False, downsample=10, distributed=False)
+Transform = 
+RandomResizedCropAndInterpolation(size=(224, 224), scale=(0.08, 1.0), ratio=(0.75, 1.3333), interpolation=PIL.Image.BICUBIC)
+RandomHorizontalFlip(p=0.5)
+<timm.data.auto_augment.RandAugment object at 0x7f8a06b441f0>
+ToTensor()
+Normalize(mean=tensor([0.4850, 0.4560, 0.4060]), std=tensor([0.2290, 0.2240, 0.2250]))
+<timm.data.random_erasing.RandomErasing object at 0x7f8a06b44a00>
+---------------------------
+Files already downloaded and verified
+Number of the class = 10
+Transform = 
+Resize(size=256, interpolation=bicubic, max_size=None, antialias=None)
+CenterCrop(size=(224, 224))
+ToTensor()
+Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+---------------------------
+Files already downloaded and verified
+Number of the class = 10
+Sampler_train = <torch.utils.data.distributed.DistributedSampler object at 0x7f8a06b45090>
+Mixup is activated!
+Load ckpt from https://dl.fbaipublicfiles.com/convnext/convnext_tiny_1k_224_ema.pth
+Load state_dict by model_key = model
+Removing key head.weight from pretrained checkpoint
+Removing key head.bias from pretrained checkpoint
+Weights of ConvNeXt not initialized from pretrained model: ['head.weight', 'head.bias']
+Model = ConvNeXt(
+  (downsample_layers): ModuleList(
+    (0): Sequential(
+      (0): Conv2d(3, 96, kernel_size=(4, 4), stride=(4, 4))
+      (1): LayerNorm()
+    )
+    (1): Sequential(
+      (0): LayerNorm()
+      (1): Conv2d(96, 192, kernel_size=(2, 2), stride=(2, 2))
+    )
+    (2): Sequential(
+      (0): LayerNorm()
+      (1): Conv2d(192, 384, kernel_size=(2, 2), stride=(2, 2))
+    )
+    (3): Sequential(
+      (0): LayerNorm()
+      (1): Conv2d(384, 768, kernel_size=(2, 2), stride=(2, 2))
+    )
+  )
+  (stages): ModuleList(
+    (0): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(96, 96, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=96)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=96, out_features=384, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=384, out_features=96, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(96, 96, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=96)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=96, out_features=384, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=384, out_features=96, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(96, 96, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=96)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=96, out_features=384, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=384, out_features=96, bias=True)
+        (drop_path): Identity()
+      )
+    )
+    (1): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(192, 192, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=192)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=192, out_features=768, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=768, out_features=192, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(192, 192, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=192)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=192, out_features=768, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=768, out_features=192, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(192, 192, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=192)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=192, out_features=768, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=768, out_features=192, bias=True)
+        (drop_path): Identity()
+      )
+    )
+    (2): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (3): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (4): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (5): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (6): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (7): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (8): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+    )
+    (3): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(768, 768, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=768)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=768, out_features=3072, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=3072, out_features=768, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(768, 768, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=768)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=768, out_features=3072, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=3072, out_features=768, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(768, 768, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=768)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=768, out_features=3072, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=3072, out_features=768, bias=True)
+        (drop_path): Identity()
+      )
+    )
+  )
+  (norm): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+  (head): Linear(in_features=768, out_features=10, bias=True)
+)
+number of params: 27827818
+LR = 0.00400000
+Batch size = 64
+Update frequent = 1
+Number of training examples = 1250
+Number of training training per epoch = 19
+Param groups = {
+  "decay": {
+    "weight_decay": 0.05,
+    "params": [
+      "downsample_layers.0.0.weight",
+      "downsample_layers.1.1.weight",
+      "downsample_layers.2.1.weight",
+      "downsample_layers.3.1.weight",
+      "stages.0.0.dwconv.weight",
+      "stages.0.0.pwconv1.weight",
+      "stages.0.0.pwconv2.weight",
+      "stages.0.1.dwconv.weight",
+      "stages.0.1.pwconv1.weight",
+      "stages.0.1.pwconv2.weight",
+      "stages.0.2.dwconv.weight",
+      "stages.0.2.pwconv1.weight",
+      "stages.0.2.pwconv2.weight",
+      "stages.1.0.dwconv.weight",
+      "stages.1.0.pwconv1.weight",
+      "stages.1.0.pwconv2.weight",
+      "stages.1.1.dwconv.weight",
+      "stages.1.1.pwconv1.weight",
+      "stages.1.1.pwconv2.weight",
+      "stages.1.2.dwconv.weight",
+      "stages.1.2.pwconv1.weight",
+      "stages.1.2.pwconv2.weight",
+      "stages.2.0.dwconv.weight",
+      "stages.2.0.pwconv1.weight",
+      "stages.2.0.pwconv2.weight",
+      "stages.2.1.dwconv.weight",
+      "stages.2.1.pwconv1.weight",
+      "stages.2.1.pwconv2.weight",
+      "stages.2.2.dwconv.weight",
+      "stages.2.2.pwconv1.weight",
+      "stages.2.2.pwconv2.weight",
+      "stages.2.3.dwconv.weight",
+      "stages.2.3.pwconv1.weight",
+      "stages.2.3.pwconv2.weight",
+      "stages.2.4.dwconv.weight",
+      "stages.2.4.pwconv1.weight",
+      "stages.2.4.pwconv2.weight",
+      "stages.2.5.dwconv.weight",
+      "stages.2.5.pwconv1.weight",
+      "stages.2.5.pwconv2.weight",
+      "stages.2.6.dwconv.weight",
+      "stages.2.6.pwconv1.weight",
+      "stages.2.6.pwconv2.weight",
+      "stages.2.7.dwconv.weight",
+      "stages.2.7.pwconv1.weight",
+      "stages.2.7.pwconv2.weight",
+      "stages.2.8.dwconv.weight",
+      "stages.2.8.pwconv1.weight",
+      "stages.2.8.pwconv2.weight",
+      "stages.3.0.dwconv.weight",
+      "stages.3.0.pwconv1.weight",
+      "stages.3.0.pwconv2.weight",
+      "stages.3.1.dwconv.weight",
+      "stages.3.1.pwconv1.weight",
+      "stages.3.1.pwconv2.weight",
+      "stages.3.2.dwconv.weight",
+      "stages.3.2.pwconv1.weight",
+      "stages.3.2.pwconv2.weight",
+      "head.weight"
+    ],
+    "lr_scale": 1.0
+  },
+  "no_decay": {
+    "weight_decay": 0.0,
+    "params": [
+      "downsample_layers.0.0.bias",
+      "downsample_layers.0.1.weight",
+      "downsample_layers.0.1.bias",
+      "downsample_layers.1.0.weight",
+      "downsample_layers.1.0.bias",
+      "downsample_layers.1.1.bias",
+      "downsample_layers.2.0.weight",
+      "downsample_layers.2.0.bias",
+      "downsample_layers.2.1.bias",
+      "downsample_layers.3.0.weight",
+      "downsample_layers.3.0.bias",
+      "downsample_layers.3.1.bias",
+      "stages.0.0.gamma",
+      "stages.0.0.dwconv.bias",
+      "stages.0.0.norm.weight",
+      "stages.0.0.norm.bias",
+      "stages.0.0.pwconv1.bias",
+      "stages.0.0.pwconv2.bias",
+      "stages.0.1.gamma",
+      "stages.0.1.dwconv.bias",
+      "stages.0.1.norm.weight",
+      "stages.0.1.norm.bias",
+      "stages.0.1.pwconv1.bias",
+      "stages.0.1.pwconv2.bias",
+      "stages.0.2.gamma",
+      "stages.0.2.dwconv.bias",
+      "stages.0.2.norm.weight",
+      "stages.0.2.norm.bias",
+      "stages.0.2.pwconv1.bias",
+      "stages.0.2.pwconv2.bias",
+      "stages.1.0.gamma",
+      "stages.1.0.dwconv.bias",
+      "stages.1.0.norm.weight",
+      "stages.1.0.norm.bias",
+      "stages.1.0.pwconv1.bias",
+      "stages.1.0.pwconv2.bias",
+      "stages.1.1.gamma",
+      "stages.1.1.dwconv.bias",
+      "stages.1.1.norm.weight",
+      "stages.1.1.norm.bias",
+      "stages.1.1.pwconv1.bias",
+      "stages.1.1.pwconv2.bias",
+      "stages.1.2.gamma",
+      "stages.1.2.dwconv.bias",
+      "stages.1.2.norm.weight",
+      "stages.1.2.norm.bias",
+      "stages.1.2.pwconv1.bias",
+      "stages.1.2.pwconv2.bias",
+      "stages.2.0.gamma",
+      "stages.2.0.dwconv.bias",
+      "stages.2.0.norm.weight",
+      "stages.2.0.norm.bias",
+      "stages.2.0.pwconv1.bias",
+      "stages.2.0.pwconv2.bias",
+      "stages.2.1.gamma",
+      "stages.2.1.dwconv.bias",
+      "stages.2.1.norm.weight",
+      "stages.2.1.norm.bias",
+      "stages.2.1.pwconv1.bias",
+      "stages.2.1.pwconv2.bias",
+      "stages.2.2.gamma",
+      "stages.2.2.dwconv.bias",
+      "stages.2.2.norm.weight",
+      "stages.2.2.norm.bias",
+      "stages.2.2.pwconv1.bias",
+      "stages.2.2.pwconv2.bias",
+      "stages.2.3.gamma",
+      "stages.2.3.dwconv.bias",
+      "stages.2.3.norm.weight",
+      "stages.2.3.norm.bias",
+      "stages.2.3.pwconv1.bias",
+      "stages.2.3.pwconv2.bias",
+      "stages.2.4.gamma",
+      "stages.2.4.dwconv.bias",
+      "stages.2.4.norm.weight",
+      "stages.2.4.norm.bias",
+      "stages.2.4.pwconv1.bias",
+      "stages.2.4.pwconv2.bias",
+      "stages.2.5.gamma",
+      "stages.2.5.dwconv.bias",
+      "stages.2.5.norm.weight",
+      "stages.2.5.norm.bias",
+      "stages.2.5.pwconv1.bias",
+      "stages.2.5.pwconv2.bias",
+      "stages.2.6.gamma",
+      "stages.2.6.dwconv.bias",
+      "stages.2.6.norm.weight",
+      "stages.2.6.norm.bias",
+      "stages.2.6.pwconv1.bias",
+      "stages.2.6.pwconv2.bias",
+      "stages.2.7.gamma",
+      "stages.2.7.dwconv.bias",
+      "stages.2.7.norm.weight",
+      "stages.2.7.norm.bias",
+      "stages.2.7.pwconv1.bias",
+      "stages.2.7.pwconv2.bias",
+      "stages.2.8.gamma",
+      "stages.2.8.dwconv.bias",
+      "stages.2.8.norm.weight",
+      "stages.2.8.norm.bias",
+      "stages.2.8.pwconv1.bias",
+      "stages.2.8.pwconv2.bias",
+      "stages.3.0.gamma",
+      "stages.3.0.dwconv.bias",
+      "stages.3.0.norm.weight",
+      "stages.3.0.norm.bias",
+      "stages.3.0.pwconv1.bias",
+      "stages.3.0.pwconv2.bias",
+      "stages.3.1.gamma",
+      "stages.3.1.dwconv.bias",
+      "stages.3.1.norm.weight",
+      "stages.3.1.norm.bias",
+      "stages.3.1.pwconv1.bias",
+      "stages.3.1.pwconv2.bias",
+      "stages.3.2.gamma",
+      "stages.3.2.dwconv.bias",
+      "stages.3.2.norm.weight",
+      "stages.3.2.norm.bias",
+      "stages.3.2.pwconv1.bias",
+      "stages.3.2.pwconv2.bias",
+      "norm.weight",
+      "norm.bias",
+      "head.bias"
+    ],
+    "lr_scale": 1.0
+  }
+}
+Use Cosine LR scheduler
+Set warmup steps = 0
+Set warmup steps = 0
+Max WD = 0.0500000, Min WD = 0.0500000
+criterion = SoftTargetCrossEntropy()
+Auto resume checkpoint: 
+Start training for 10 epochs
+Not using distributed mode
+Namespace(batch_size=64, epochs=10, update_freq=1, model='convnext_tiny', drop_path=0, input_size=224, layer_scale_init_value=1e-06, model_ema=False, model_ema_decay=0.9999, model_ema_force_cpu=False, model_ema_eval=False, opt='adamw', opt_eps=1e-08, opt_betas=None, clip_grad=None, momentum=0.9, weight_decay=0.05, weight_decay_end=None, lr=0.004, layer_decay=1.0, min_lr=1e-06, warmup_epochs=0, warmup_steps=-1, color_jitter=0.4, aa='rand-m9-mstd0.5-inc1', smoothing=0.1, train_interpolation='bicubic', crop_pct=None, reprob=0.25, remode='pixel', recount=1, resplit=False, mixup=0.8, cutmix=1.0, cutmix_minmax=None, mixup_prob=1.0, mixup_switch_prob=0.5, mixup_mode='batch', finetune='https://dl.fbaipublicfiles.com/convnext/convnext_tiny_1k_224_ema.pth', head_init_scale=1.0, model_key='model|module', model_prefix='', data_path='dataset', eval_data_path=None, nb_classes=1000, imagenet_default_mean_and_std=True, data_set='CIFAR', output_dir='network', log_dir=None, device='cuda', seed=0, resume='', auto_resume=True, save_ckpt=True, save_ckpt_freq=1, save_ckpt_num=3, start_epoch=0, eval=False, dist_eval=True, disable_eval=False, num_workers=8, pin_mem=True, world_size=1, local_rank=-1, dist_on_itp=False, dist_url='env://', use_amp=False, enable_wandb=False, project='convnext', wandb_ckpt=False, downsample=10, distributed=False)
+Transform = 
+RandomResizedCropAndInterpolation(size=(224, 224), scale=(0.08, 1.0), ratio=(0.75, 1.3333), interpolation=PIL.Image.BICUBIC)
+RandomHorizontalFlip(p=0.5)
+<timm.data.auto_augment.RandAugment object at 0x7f30440401f0>
+ToTensor()
+Normalize(mean=tensor([0.4850, 0.4560, 0.4060]), std=tensor([0.2290, 0.2240, 0.2250]))
+<timm.data.random_erasing.RandomErasing object at 0x7f3044040a00>
+---------------------------
+Files already downloaded and verified
+Number of the class = 10
+Transform = 
+Resize(size=256, interpolation=bicubic, max_size=None, antialias=None)
+CenterCrop(size=(224, 224))
+ToTensor()
+Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+---------------------------
+Files already downloaded and verified
+Number of the class = 10
+Sampler_train = <torch.utils.data.distributed.DistributedSampler object at 0x7f3044041090>
+Mixup is activated!
+Load ckpt from https://dl.fbaipublicfiles.com/convnext/convnext_tiny_1k_224_ema.pth
+Load state_dict by model_key = model
+Removing key head.weight from pretrained checkpoint
+Removing key head.bias from pretrained checkpoint
+Weights of ConvNeXt not initialized from pretrained model: ['head.weight', 'head.bias']
+Model = ConvNeXt(
+  (downsample_layers): ModuleList(
+    (0): Sequential(
+      (0): Conv2d(3, 96, kernel_size=(4, 4), stride=(4, 4))
+      (1): LayerNorm()
+    )
+    (1): Sequential(
+      (0): LayerNorm()
+      (1): Conv2d(96, 192, kernel_size=(2, 2), stride=(2, 2))
+    )
+    (2): Sequential(
+      (0): LayerNorm()
+      (1): Conv2d(192, 384, kernel_size=(2, 2), stride=(2, 2))
+    )
+    (3): Sequential(
+      (0): LayerNorm()
+      (1): Conv2d(384, 768, kernel_size=(2, 2), stride=(2, 2))
+    )
+  )
+  (stages): ModuleList(
+    (0): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(96, 96, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=96)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=96, out_features=384, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=384, out_features=96, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(96, 96, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=96)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=96, out_features=384, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=384, out_features=96, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(96, 96, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=96)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=96, out_features=384, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=384, out_features=96, bias=True)
+        (drop_path): Identity()
+      )
+    )
+    (1): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(192, 192, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=192)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=192, out_features=768, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=768, out_features=192, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(192, 192, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=192)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=192, out_features=768, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=768, out_features=192, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(192, 192, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=192)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=192, out_features=768, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=768, out_features=192, bias=True)
+        (drop_path): Identity()
+      )
+    )
+    (2): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (3): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (4): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (5): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (6): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (7): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (8): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+    )
+    (3): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(768, 768, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=768)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=768, out_features=3072, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=3072, out_features=768, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(768, 768, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=768)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=768, out_features=3072, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=3072, out_features=768, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(768, 768, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=768)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=768, out_features=3072, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=3072, out_features=768, bias=True)
+        (drop_path): Identity()
+      )
+    )
+  )
+  (norm): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+  (head): Linear(in_features=768, out_features=10, bias=True)
+)
+number of params: 27827818
+LR = 0.00400000
+Batch size = 64
+Update frequent = 1
+Number of training examples = 5000
+Number of training training per epoch = 78
+Param groups = {
+  "decay": {
+    "weight_decay": 0.05,
+    "params": [
+      "downsample_layers.0.0.weight",
+      "downsample_layers.1.1.weight",
+      "downsample_layers.2.1.weight",
+      "downsample_layers.3.1.weight",
+      "stages.0.0.dwconv.weight",
+      "stages.0.0.pwconv1.weight",
+      "stages.0.0.pwconv2.weight",
+      "stages.0.1.dwconv.weight",
+      "stages.0.1.pwconv1.weight",
+      "stages.0.1.pwconv2.weight",
+      "stages.0.2.dwconv.weight",
+      "stages.0.2.pwconv1.weight",
+      "stages.0.2.pwconv2.weight",
+      "stages.1.0.dwconv.weight",
+      "stages.1.0.pwconv1.weight",
+      "stages.1.0.pwconv2.weight",
+      "stages.1.1.dwconv.weight",
+      "stages.1.1.pwconv1.weight",
+      "stages.1.1.pwconv2.weight",
+      "stages.1.2.dwconv.weight",
+      "stages.1.2.pwconv1.weight",
+      "stages.1.2.pwconv2.weight",
+      "stages.2.0.dwconv.weight",
+      "stages.2.0.pwconv1.weight",
+      "stages.2.0.pwconv2.weight",
+      "stages.2.1.dwconv.weight",
+      "stages.2.1.pwconv1.weight",
+      "stages.2.1.pwconv2.weight",
+      "stages.2.2.dwconv.weight",
+      "stages.2.2.pwconv1.weight",
+      "stages.2.2.pwconv2.weight",
+      "stages.2.3.dwconv.weight",
+      "stages.2.3.pwconv1.weight",
+      "stages.2.3.pwconv2.weight",
+      "stages.2.4.dwconv.weight",
+      "stages.2.4.pwconv1.weight",
+      "stages.2.4.pwconv2.weight",
+      "stages.2.5.dwconv.weight",
+      "stages.2.5.pwconv1.weight",
+      "stages.2.5.pwconv2.weight",
+      "stages.2.6.dwconv.weight",
+      "stages.2.6.pwconv1.weight",
+      "stages.2.6.pwconv2.weight",
+      "stages.2.7.dwconv.weight",
+      "stages.2.7.pwconv1.weight",
+      "stages.2.7.pwconv2.weight",
+      "stages.2.8.dwconv.weight",
+      "stages.2.8.pwconv1.weight",
+      "stages.2.8.pwconv2.weight",
+      "stages.3.0.dwconv.weight",
+      "stages.3.0.pwconv1.weight",
+      "stages.3.0.pwconv2.weight",
+      "stages.3.1.dwconv.weight",
+      "stages.3.1.pwconv1.weight",
+      "stages.3.1.pwconv2.weight",
+      "stages.3.2.dwconv.weight",
+      "stages.3.2.pwconv1.weight",
+      "stages.3.2.pwconv2.weight",
+      "head.weight"
+    ],
+    "lr_scale": 1.0
+  },
+  "no_decay": {
+    "weight_decay": 0.0,
+    "params": [
+      "downsample_layers.0.0.bias",
+      "downsample_layers.0.1.weight",
+      "downsample_layers.0.1.bias",
+      "downsample_layers.1.0.weight",
+      "downsample_layers.1.0.bias",
+      "downsample_layers.1.1.bias",
+      "downsample_layers.2.0.weight",
+      "downsample_layers.2.0.bias",
+      "downsample_layers.2.1.bias",
+      "downsample_layers.3.0.weight",
+      "downsample_layers.3.0.bias",
+      "downsample_layers.3.1.bias",
+      "stages.0.0.gamma",
+      "stages.0.0.dwconv.bias",
+      "stages.0.0.norm.weight",
+      "stages.0.0.norm.bias",
+      "stages.0.0.pwconv1.bias",
+      "stages.0.0.pwconv2.bias",
+      "stages.0.1.gamma",
+      "stages.0.1.dwconv.bias",
+      "stages.0.1.norm.weight",
+      "stages.0.1.norm.bias",
+      "stages.0.1.pwconv1.bias",
+      "stages.0.1.pwconv2.bias",
+      "stages.0.2.gamma",
+      "stages.0.2.dwconv.bias",
+      "stages.0.2.norm.weight",
+      "stages.0.2.norm.bias",
+      "stages.0.2.pwconv1.bias",
+      "stages.0.2.pwconv2.bias",
+      "stages.1.0.gamma",
+      "stages.1.0.dwconv.bias",
+      "stages.1.0.norm.weight",
+      "stages.1.0.norm.bias",
+      "stages.1.0.pwconv1.bias",
+      "stages.1.0.pwconv2.bias",
+      "stages.1.1.gamma",
+      "stages.1.1.dwconv.bias",
+      "stages.1.1.norm.weight",
+      "stages.1.1.norm.bias",
+      "stages.1.1.pwconv1.bias",
+      "stages.1.1.pwconv2.bias",
+      "stages.1.2.gamma",
+      "stages.1.2.dwconv.bias",
+      "stages.1.2.norm.weight",
+      "stages.1.2.norm.bias",
+      "stages.1.2.pwconv1.bias",
+      "stages.1.2.pwconv2.bias",
+      "stages.2.0.gamma",
+      "stages.2.0.dwconv.bias",
+      "stages.2.0.norm.weight",
+      "stages.2.0.norm.bias",
+      "stages.2.0.pwconv1.bias",
+      "stages.2.0.pwconv2.bias",
+      "stages.2.1.gamma",
+      "stages.2.1.dwconv.bias",
+      "stages.2.1.norm.weight",
+      "stages.2.1.norm.bias",
+      "stages.2.1.pwconv1.bias",
+      "stages.2.1.pwconv2.bias",
+      "stages.2.2.gamma",
+      "stages.2.2.dwconv.bias",
+      "stages.2.2.norm.weight",
+      "stages.2.2.norm.bias",
+      "stages.2.2.pwconv1.bias",
+      "stages.2.2.pwconv2.bias",
+      "stages.2.3.gamma",
+      "stages.2.3.dwconv.bias",
+      "stages.2.3.norm.weight",
+      "stages.2.3.norm.bias",
+      "stages.2.3.pwconv1.bias",
+      "stages.2.3.pwconv2.bias",
+      "stages.2.4.gamma",
+      "stages.2.4.dwconv.bias",
+      "stages.2.4.norm.weight",
+      "stages.2.4.norm.bias",
+      "stages.2.4.pwconv1.bias",
+      "stages.2.4.pwconv2.bias",
+      "stages.2.5.gamma",
+      "stages.2.5.dwconv.bias",
+      "stages.2.5.norm.weight",
+      "stages.2.5.norm.bias",
+      "stages.2.5.pwconv1.bias",
+      "stages.2.5.pwconv2.bias",
+      "stages.2.6.gamma",
+      "stages.2.6.dwconv.bias",
+      "stages.2.6.norm.weight",
+      "stages.2.6.norm.bias",
+      "stages.2.6.pwconv1.bias",
+      "stages.2.6.pwconv2.bias",
+      "stages.2.7.gamma",
+      "stages.2.7.dwconv.bias",
+      "stages.2.7.norm.weight",
+      "stages.2.7.norm.bias",
+      "stages.2.7.pwconv1.bias",
+      "stages.2.7.pwconv2.bias",
+      "stages.2.8.gamma",
+      "stages.2.8.dwconv.bias",
+      "stages.2.8.norm.weight",
+      "stages.2.8.norm.bias",
+      "stages.2.8.pwconv1.bias",
+      "stages.2.8.pwconv2.bias",
+      "stages.3.0.gamma",
+      "stages.3.0.dwconv.bias",
+      "stages.3.0.norm.weight",
+      "stages.3.0.norm.bias",
+      "stages.3.0.pwconv1.bias",
+      "stages.3.0.pwconv2.bias",
+      "stages.3.1.gamma",
+      "stages.3.1.dwconv.bias",
+      "stages.3.1.norm.weight",
+      "stages.3.1.norm.bias",
+      "stages.3.1.pwconv1.bias",
+      "stages.3.1.pwconv2.bias",
+      "stages.3.2.gamma",
+      "stages.3.2.dwconv.bias",
+      "stages.3.2.norm.weight",
+      "stages.3.2.norm.bias",
+      "stages.3.2.pwconv1.bias",
+      "stages.3.2.pwconv2.bias",
+      "norm.weight",
+      "norm.bias",
+      "head.bias"
+    ],
+    "lr_scale": 1.0
+  }
+}
+Use Cosine LR scheduler
+Set warmup steps = 0
+Set warmup steps = 0
+Max WD = 0.0500000, Min WD = 0.0500000
+criterion = SoftTargetCrossEntropy()
+Auto resume checkpoint: 
+Start training for 10 epochs
+Epoch: [0]  [ 0/78]  eta: 0:05:03  lr: 0.004000  min_lr: 0.004000  loss: 2.3375 (2.3375)  weight_decay: 0.0500 (0.0500)  time: 3.8851  data: 0.4962  max mem: 7656
+Epoch: [0]  [10/78]  eta: 0:01:49  lr: 0.003998  min_lr: 0.003998  loss: 2.3231 (2.3363)  weight_decay: 0.0500 (0.0500)  time: 1.6100  data: 0.0452  max mem: 7978
+Epoch: [0]  [20/78]  eta: 0:01:32  lr: 0.003994  min_lr: 0.003994  loss: 2.3122 (2.3287)  weight_decay: 0.0500 (0.0500)  time: 1.4839  data: 0.0002  max mem: 7978
+Epoch: [0]  [30/78]  eta: 0:01:16  lr: 0.003985  min_lr: 0.003985  loss: 2.3117 (2.3249)  weight_decay: 0.0500 (0.0500)  time: 1.5881  data: 0.0002  max mem: 7978
+Epoch: [0]  [40/78]  eta: 0:01:01  lr: 0.003974  min_lr: 0.003974  loss: 2.3123 (2.3237)  weight_decay: 0.0500 (0.0500)  time: 1.6303  data: 0.0002  max mem: 7978
+Epoch: [0]  [50/78]  eta: 0:00:44  lr: 0.003960  min_lr: 0.003960  loss: 2.3176 (2.3216)  weight_decay: 0.0500 (0.0500)  time: 1.6015  data: 0.0002  max mem: 7978
+Epoch: [0]  [60/78]  eta: 0:00:28  lr: 0.003942  min_lr: 0.003942  loss: 2.3150 (2.3201)  weight_decay: 0.0500 (0.0500)  time: 1.4878  data: 0.0002  max mem: 7978
+Epoch: [0]  [70/78]  eta: 0:00:12  lr: 0.003921  min_lr: 0.003921  loss: 2.3129 (2.3192)  weight_decay: 0.0500 (0.0500)  time: 1.4404  data: 0.0001  max mem: 7978
+Epoch: [0]  [77/78]  eta: 0:00:01  lr: 0.003905  min_lr: 0.003905  loss: 2.3129 (2.3186)  weight_decay: 0.0500 (0.0500)  time: 1.4895  data: 0.0001  max mem: 7978
+Epoch: [0] Total time: 0:02:01 (1.5564 s / it)
+Averaged stats: lr: 0.003905  min_lr: 0.003905  loss: 2.3129 (2.3186)  weight_decay: 0.0500 (0.0500)
+Test:  [ 0/11]  eta: 0:00:09  loss: 2.2980 (2.2980)  acc1: 9.3750 (9.3750)  acc5: 54.1667 (54.1667)  time: 0.8660  data: 0.3477  max mem: 7978
+Test:  [10/11]  eta: 0:00:00  loss: 2.3040 (2.3091)  acc1: 9.3750 (10.8000)  acc5: 52.0833 (52.1000)  time: 0.2390  data: 0.0317  max mem: 7978
+Not using distributed mode
+Namespace(batch_size=64, epochs=10, update_freq=1, model='convnext_tiny', drop_path=0, input_size=224, layer_scale_init_value=1e-06, model_ema=False, model_ema_decay=0.9999, model_ema_force_cpu=False, model_ema_eval=False, opt='adamw', opt_eps=1e-08, opt_betas=None, clip_grad=None, momentum=0.9, weight_decay=0.05, weight_decay_end=None, lr=0.004, layer_decay=1.0, min_lr=1e-06, warmup_epochs=0, warmup_steps=-1, color_jitter=0.4, aa='rand-m9-mstd0.5-inc1', smoothing=0.1, train_interpolation='bicubic', crop_pct=None, reprob=0.25, remode='pixel', recount=1, resplit=False, mixup=0.8, cutmix=1.0, cutmix_minmax=None, mixup_prob=1.0, mixup_switch_prob=0.5, mixup_mode='batch', finetune='https://dl.fbaipublicfiles.com/convnext/convnext_tiny_1k_224_ema.pth', head_init_scale=1.0, model_key='model|module', model_prefix='', data_path='dataset', eval_data_path=None, nb_classes=1000, imagenet_default_mean_and_std=True, data_set='CIFAR', output_dir='network', log_dir=None, device='cuda', seed=0, resume='', auto_resume=True, save_ckpt=True, save_ckpt_freq=1, save_ckpt_num=3, start_epoch=0, eval=False, dist_eval=True, disable_eval=False, num_workers=8, pin_mem=True, world_size=1, local_rank=-1, dist_on_itp=False, dist_url='env://', use_amp=False, enable_wandb=False, project='convnext', wandb_ckpt=False, downsample=10, distributed=False)
+Transform = 
+RandomResizedCropAndInterpolation(size=(224, 224), scale=(0.08, 1.0), ratio=(0.75, 1.3333), interpolation=PIL.Image.BICUBIC)
+RandomHorizontalFlip(p=0.5)
+<timm.data.auto_augment.RandAugment object at 0x7f853103c1c0>
+ToTensor()
+Normalize(mean=tensor([0.4850, 0.4560, 0.4060]), std=tensor([0.2290, 0.2240, 0.2250]))
+<timm.data.random_erasing.RandomErasing object at 0x7f853103c9d0>
+---------------------------
+Files already downloaded and verified
+Number of the class = 10
+Transform = 
+Resize(size=256, interpolation=bicubic, max_size=None, antialias=None)
+CenterCrop(size=(224, 224))
+ToTensor()
+Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+---------------------------
+Files already downloaded and verified
+Number of the class = 10
+Sampler_train = <torch.utils.data.distributed.DistributedSampler object at 0x7f853103d090>
+Mixup is activated!
+Load ckpt from https://dl.fbaipublicfiles.com/convnext/convnext_tiny_1k_224_ema.pth
+Load state_dict by model_key = model
+Removing key head.weight from pretrained checkpoint
+Removing key head.bias from pretrained checkpoint
+Weights of ConvNeXt not initialized from pretrained model: ['head.weight', 'head.bias']
+Model = ConvNeXt(
+  (downsample_layers): ModuleList(
+    (0): Sequential(
+      (0): Conv2d(3, 96, kernel_size=(4, 4), stride=(4, 4))
+      (1): LayerNorm()
+    )
+    (1): Sequential(
+      (0): LayerNorm()
+      (1): Conv2d(96, 192, kernel_size=(2, 2), stride=(2, 2))
+    )
+    (2): Sequential(
+      (0): LayerNorm()
+      (1): Conv2d(192, 384, kernel_size=(2, 2), stride=(2, 2))
+    )
+    (3): Sequential(
+      (0): LayerNorm()
+      (1): Conv2d(384, 768, kernel_size=(2, 2), stride=(2, 2))
+    )
+  )
+  (stages): ModuleList(
+    (0): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(96, 96, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=96)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=96, out_features=384, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=384, out_features=96, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(96, 96, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=96)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=96, out_features=384, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=384, out_features=96, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(96, 96, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=96)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=96, out_features=384, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=384, out_features=96, bias=True)
+        (drop_path): Identity()
+      )
+    )
+    (1): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(192, 192, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=192)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=192, out_features=768, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=768, out_features=192, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(192, 192, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=192)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=192, out_features=768, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=768, out_features=192, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(192, 192, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=192)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=192, out_features=768, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=768, out_features=192, bias=True)
+        (drop_path): Identity()
+      )
+    )
+    (2): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (3): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (4): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (5): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (6): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (7): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (8): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+    )
+    (3): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(768, 768, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=768)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=768, out_features=3072, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=3072, out_features=768, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(768, 768, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=768)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=768, out_features=3072, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=3072, out_features=768, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(768, 768, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=768)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=768, out_features=3072, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=3072, out_features=768, bias=True)
+        (drop_path): Identity()
+      )
+    )
+  )
+  (norm): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+  (head): Linear(in_features=768, out_features=10, bias=True)
+)
+number of params: 27827818
+LR = 0.00400000
+Batch size = 64
+Update frequent = 1
+Number of training examples = 5000
+Number of training training per epoch = 78
+Param groups = {
+  "decay": {
+    "weight_decay": 0.05,
+    "params": [
+      "downsample_layers.0.0.weight",
+      "downsample_layers.1.1.weight",
+      "downsample_layers.2.1.weight",
+      "downsample_layers.3.1.weight",
+      "stages.0.0.dwconv.weight",
+      "stages.0.0.pwconv1.weight",
+      "stages.0.0.pwconv2.weight",
+      "stages.0.1.dwconv.weight",
+      "stages.0.1.pwconv1.weight",
+      "stages.0.1.pwconv2.weight",
+      "stages.0.2.dwconv.weight",
+      "stages.0.2.pwconv1.weight",
+      "stages.0.2.pwconv2.weight",
+      "stages.1.0.dwconv.weight",
+      "stages.1.0.pwconv1.weight",
+      "stages.1.0.pwconv2.weight",
+      "stages.1.1.dwconv.weight",
+      "stages.1.1.pwconv1.weight",
+      "stages.1.1.pwconv2.weight",
+      "stages.1.2.dwconv.weight",
+      "stages.1.2.pwconv1.weight",
+      "stages.1.2.pwconv2.weight",
+      "stages.2.0.dwconv.weight",
+      "stages.2.0.pwconv1.weight",
+      "stages.2.0.pwconv2.weight",
+      "stages.2.1.dwconv.weight",
+      "stages.2.1.pwconv1.weight",
+      "stages.2.1.pwconv2.weight",
+      "stages.2.2.dwconv.weight",
+      "stages.2.2.pwconv1.weight",
+      "stages.2.2.pwconv2.weight",
+      "stages.2.3.dwconv.weight",
+      "stages.2.3.pwconv1.weight",
+      "stages.2.3.pwconv2.weight",
+      "stages.2.4.dwconv.weight",
+      "stages.2.4.pwconv1.weight",
+      "stages.2.4.pwconv2.weight",
+      "stages.2.5.dwconv.weight",
+      "stages.2.5.pwconv1.weight",
+      "stages.2.5.pwconv2.weight",
+      "stages.2.6.dwconv.weight",
+      "stages.2.6.pwconv1.weight",
+      "stages.2.6.pwconv2.weight",
+      "stages.2.7.dwconv.weight",
+      "stages.2.7.pwconv1.weight",
+      "stages.2.7.pwconv2.weight",
+      "stages.2.8.dwconv.weight",
+      "stages.2.8.pwconv1.weight",
+      "stages.2.8.pwconv2.weight",
+      "stages.3.0.dwconv.weight",
+      "stages.3.0.pwconv1.weight",
+      "stages.3.0.pwconv2.weight",
+      "stages.3.1.dwconv.weight",
+      "stages.3.1.pwconv1.weight",
+      "stages.3.1.pwconv2.weight",
+      "stages.3.2.dwconv.weight",
+      "stages.3.2.pwconv1.weight",
+      "stages.3.2.pwconv2.weight",
+      "head.weight"
+    ],
+    "lr_scale": 1.0
+  },
+  "no_decay": {
+    "weight_decay": 0.0,
+    "params": [
+      "downsample_layers.0.0.bias",
+      "downsample_layers.0.1.weight",
+      "downsample_layers.0.1.bias",
+      "downsample_layers.1.0.weight",
+      "downsample_layers.1.0.bias",
+      "downsample_layers.1.1.bias",
+      "downsample_layers.2.0.weight",
+      "downsample_layers.2.0.bias",
+      "downsample_layers.2.1.bias",
+      "downsample_layers.3.0.weight",
+      "downsample_layers.3.0.bias",
+      "downsample_layers.3.1.bias",
+      "stages.0.0.gamma",
+      "stages.0.0.dwconv.bias",
+      "stages.0.0.norm.weight",
+      "stages.0.0.norm.bias",
+      "stages.0.0.pwconv1.bias",
+      "stages.0.0.pwconv2.bias",
+      "stages.0.1.gamma",
+      "stages.0.1.dwconv.bias",
+      "stages.0.1.norm.weight",
+      "stages.0.1.norm.bias",
+      "stages.0.1.pwconv1.bias",
+      "stages.0.1.pwconv2.bias",
+      "stages.0.2.gamma",
+      "stages.0.2.dwconv.bias",
+      "stages.0.2.norm.weight",
+      "stages.0.2.norm.bias",
+      "stages.0.2.pwconv1.bias",
+      "stages.0.2.pwconv2.bias",
+      "stages.1.0.gamma",
+      "stages.1.0.dwconv.bias",
+      "stages.1.0.norm.weight",
+      "stages.1.0.norm.bias",
+      "stages.1.0.pwconv1.bias",
+      "stages.1.0.pwconv2.bias",
+      "stages.1.1.gamma",
+      "stages.1.1.dwconv.bias",
+      "stages.1.1.norm.weight",
+      "stages.1.1.norm.bias",
+      "stages.1.1.pwconv1.bias",
+      "stages.1.1.pwconv2.bias",
+      "stages.1.2.gamma",
+      "stages.1.2.dwconv.bias",
+      "stages.1.2.norm.weight",
+      "stages.1.2.norm.bias",
+      "stages.1.2.pwconv1.bias",
+      "stages.1.2.pwconv2.bias",
+      "stages.2.0.gamma",
+      "stages.2.0.dwconv.bias",
+      "stages.2.0.norm.weight",
+      "stages.2.0.norm.bias",
+      "stages.2.0.pwconv1.bias",
+      "stages.2.0.pwconv2.bias",
+      "stages.2.1.gamma",
+      "stages.2.1.dwconv.bias",
+      "stages.2.1.norm.weight",
+      "stages.2.1.norm.bias",
+      "stages.2.1.pwconv1.bias",
+      "stages.2.1.pwconv2.bias",
+      "stages.2.2.gamma",
+      "stages.2.2.dwconv.bias",
+      "stages.2.2.norm.weight",
+      "stages.2.2.norm.bias",
+      "stages.2.2.pwconv1.bias",
+      "stages.2.2.pwconv2.bias",
+      "stages.2.3.gamma",
+      "stages.2.3.dwconv.bias",
+      "stages.2.3.norm.weight",
+      "stages.2.3.norm.bias",
+      "stages.2.3.pwconv1.bias",
+      "stages.2.3.pwconv2.bias",
+      "stages.2.4.gamma",
+      "stages.2.4.dwconv.bias",
+      "stages.2.4.norm.weight",
+      "stages.2.4.norm.bias",
+      "stages.2.4.pwconv1.bias",
+      "stages.2.4.pwconv2.bias",
+      "stages.2.5.gamma",
+      "stages.2.5.dwconv.bias",
+      "stages.2.5.norm.weight",
+      "stages.2.5.norm.bias",
+      "stages.2.5.pwconv1.bias",
+      "stages.2.5.pwconv2.bias",
+      "stages.2.6.gamma",
+      "stages.2.6.dwconv.bias",
+      "stages.2.6.norm.weight",
+      "stages.2.6.norm.bias",
+      "stages.2.6.pwconv1.bias",
+      "stages.2.6.pwconv2.bias",
+      "stages.2.7.gamma",
+      "stages.2.7.dwconv.bias",
+      "stages.2.7.norm.weight",
+      "stages.2.7.norm.bias",
+      "stages.2.7.pwconv1.bias",
+      "stages.2.7.pwconv2.bias",
+      "stages.2.8.gamma",
+      "stages.2.8.dwconv.bias",
+      "stages.2.8.norm.weight",
+      "stages.2.8.norm.bias",
+      "stages.2.8.pwconv1.bias",
+      "stages.2.8.pwconv2.bias",
+      "stages.3.0.gamma",
+      "stages.3.0.dwconv.bias",
+      "stages.3.0.norm.weight",
+      "stages.3.0.norm.bias",
+      "stages.3.0.pwconv1.bias",
+      "stages.3.0.pwconv2.bias",
+      "stages.3.1.gamma",
+      "stages.3.1.dwconv.bias",
+      "stages.3.1.norm.weight",
+      "stages.3.1.norm.bias",
+      "stages.3.1.pwconv1.bias",
+      "stages.3.1.pwconv2.bias",
+      "stages.3.2.gamma",
+      "stages.3.2.dwconv.bias",
+      "stages.3.2.norm.weight",
+      "stages.3.2.norm.bias",
+      "stages.3.2.pwconv1.bias",
+      "stages.3.2.pwconv2.bias",
+      "norm.weight",
+      "norm.bias",
+      "head.bias"
+    ],
+    "lr_scale": 1.0
+  }
+}
+Use Cosine LR scheduler
+Set warmup steps = 0
+Set warmup steps = 0
+Max WD = 0.0500000, Min WD = 0.0500000
+criterion = SoftTargetCrossEntropy()
+Auto resume checkpoint: 
+Start training for 10 epochs
+Epoch: [0]  [ 0/78]  eta: 0:03:47  lr: 0.004000  min_lr: 0.004000  loss: 2.3375 (2.3375)  weight_decay: 0.0500 (0.0500)  time: 2.9115  data: 0.4749  max mem: 7656
+Epoch: [0]  [10/78]  eta: 0:01:36  lr: 0.003998  min_lr: 0.003998  loss: 2.3231 (2.3363)  weight_decay: 0.0500 (0.0500)  time: 1.4149  data: 0.0433  max mem: 7978
+Epoch: [0]  [20/78]  eta: 0:01:19  lr: 0.003994  min_lr: 0.003994  loss: 2.3122 (2.3287)  weight_decay: 0.0500 (0.0500)  time: 1.2920  data: 0.0001  max mem: 7978
+Epoch: [0]  [30/78]  eta: 0:01:08  lr: 0.003985  min_lr: 0.003985  loss: 2.3116 (2.3249)  weight_decay: 0.0500 (0.0500)  time: 1.4367  data: 0.0001  max mem: 7978
+Epoch: [0]  [40/78]  eta: 0:00:54  lr: 0.003974  min_lr: 0.003974  loss: 2.3123 (2.3237)  weight_decay: 0.0500 (0.0500)  time: 1.5238  data: 0.0002  max mem: 7978
+Epoch: [0]  [50/78]  eta: 0:00:40  lr: 0.003960  min_lr: 0.003960  loss: 2.3176 (2.3216)  weight_decay: 0.0500 (0.0500)  time: 1.4300  data: 0.0002  max mem: 7978
+Epoch: [0]  [60/78]  eta: 0:00:25  lr: 0.003942  min_lr: 0.003942  loss: 2.3150 (2.3201)  weight_decay: 0.0500 (0.0500)  time: 1.3661  data: 0.0002  max mem: 7978
+Epoch: [0]  [70/78]  eta: 0:00:11  lr: 0.003921  min_lr: 0.003921  loss: 2.3129 (2.3192)  weight_decay: 0.0500 (0.0500)  time: 1.4040  data: 0.0001  max mem: 7978
+Epoch: [0]  [77/78]  eta: 0:00:01  lr: 0.003905  min_lr: 0.003905  loss: 2.3129 (2.3186)  weight_decay: 0.0500 (0.0500)  time: 1.4262  data: 0.0001  max mem: 7978
+Epoch: [0] Total time: 0:01:50 (1.4224 s / it)
+Averaged stats: lr: 0.003905  min_lr: 0.003905  loss: 2.3129 (2.3186)  weight_decay: 0.0500 (0.0500)
+Test:  [ 0/11]  eta: 0:00:10  loss: 2.2980 (2.2980)  acc1: 9.3750 (9.3750)  acc5: 54.1667 (54.1667)  time: 0.9370  data: 0.4418  max mem: 7978
+Test:  [10/11]  eta: 0:00:00  loss: 2.3041 (2.3092)  acc1: 9.3750 (10.8000)  acc5: 52.0833 (52.1000)  time: 0.2440  data: 0.0403  max mem: 7978
+Not using distributed mode
+Namespace(batch_size=64, epochs=10, update_freq=1, model='convnext_tiny', drop_path=0, input_size=224, layer_scale_init_value=1e-06, model_ema=False, model_ema_decay=0.9999, model_ema_force_cpu=False, model_ema_eval=False, opt='adamw', opt_eps=1e-08, opt_betas=None, clip_grad=None, momentum=0.9, weight_decay=0.05, weight_decay_end=None, lr=0.0004, layer_decay=1.0, min_lr=1e-06, warmup_epochs=0, warmup_steps=-1, color_jitter=0.4, aa='rand-m9-mstd0.5-inc1', smoothing=0.1, train_interpolation='bicubic', crop_pct=None, reprob=0.25, remode='pixel', recount=1, resplit=False, mixup=0.0, cutmix=0.0, cutmix_minmax=None, mixup_prob=1.0, mixup_switch_prob=0.5, mixup_mode='batch', finetune='https://dl.fbaipublicfiles.com/convnext/convnext_tiny_1k_224_ema.pth', head_init_scale=1.0, model_key='model|module', model_prefix='', data_path='dataset', eval_data_path=None, nb_classes=1000, imagenet_default_mean_and_std=True, data_set='CIFAR', output_dir='network', log_dir=None, device='cuda', seed=0, resume='', auto_resume=True, save_ckpt=True, save_ckpt_freq=1, save_ckpt_num=3, start_epoch=0, eval=False, dist_eval=True, disable_eval=False, num_workers=8, pin_mem=True, world_size=1, local_rank=-1, dist_on_itp=False, dist_url='env://', use_amp=False, enable_wandb=False, project='convnext', wandb_ckpt=False, downsample=10, distributed=False)
+Transform = 
+RandomResizedCropAndInterpolation(size=(224, 224), scale=(0.08, 1.0), ratio=(0.75, 1.3333), interpolation=PIL.Image.BICUBIC)
+RandomHorizontalFlip(p=0.5)
+<timm.data.auto_augment.RandAugment object at 0x7ff0e683c1c0>
+ToTensor()
+Normalize(mean=tensor([0.4850, 0.4560, 0.4060]), std=tensor([0.2290, 0.2240, 0.2250]))
+<timm.data.random_erasing.RandomErasing object at 0x7ff0e683c9d0>
+---------------------------
+Files already downloaded and verified
+Number of the class = 10
+Transform = 
+Resize(size=256, interpolation=bicubic, max_size=None, antialias=None)
+CenterCrop(size=(224, 224))
+ToTensor()
+Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+---------------------------
+Files already downloaded and verified
+Number of the class = 10
+Sampler_train = <torch.utils.data.distributed.DistributedSampler object at 0x7ff0e683d090>
+Load ckpt from https://dl.fbaipublicfiles.com/convnext/convnext_tiny_1k_224_ema.pth
+Load state_dict by model_key = model
+Removing key head.weight from pretrained checkpoint
+Removing key head.bias from pretrained checkpoint
+Weights of ConvNeXt not initialized from pretrained model: ['head.weight', 'head.bias']
+Model = ConvNeXt(
+  (downsample_layers): ModuleList(
+    (0): Sequential(
+      (0): Conv2d(3, 96, kernel_size=(4, 4), stride=(4, 4))
+      (1): LayerNorm()
+    )
+    (1): Sequential(
+      (0): LayerNorm()
+      (1): Conv2d(96, 192, kernel_size=(2, 2), stride=(2, 2))
+    )
+    (2): Sequential(
+      (0): LayerNorm()
+      (1): Conv2d(192, 384, kernel_size=(2, 2), stride=(2, 2))
+    )
+    (3): Sequential(
+      (0): LayerNorm()
+      (1): Conv2d(384, 768, kernel_size=(2, 2), stride=(2, 2))
+    )
+  )
+  (stages): ModuleList(
+    (0): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(96, 96, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=96)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=96, out_features=384, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=384, out_features=96, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(96, 96, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=96)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=96, out_features=384, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=384, out_features=96, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(96, 96, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=96)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=96, out_features=384, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=384, out_features=96, bias=True)
+        (drop_path): Identity()
+      )
+    )
+    (1): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(192, 192, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=192)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=192, out_features=768, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=768, out_features=192, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(192, 192, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=192)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=192, out_features=768, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=768, out_features=192, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(192, 192, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=192)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=192, out_features=768, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=768, out_features=192, bias=True)
+        (drop_path): Identity()
+      )
+    )
+    (2): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (3): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (4): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (5): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (6): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (7): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+      (8): Block(
+        (dwconv): Conv2d(384, 384, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=384)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=384, out_features=1536, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=1536, out_features=384, bias=True)
+        (drop_path): Identity()
+      )
+    )
+    (3): Sequential(
+      (0): Block(
+        (dwconv): Conv2d(768, 768, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=768)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=768, out_features=3072, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=3072, out_features=768, bias=True)
+        (drop_path): Identity()
+      )
+      (1): Block(
+        (dwconv): Conv2d(768, 768, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=768)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=768, out_features=3072, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=3072, out_features=768, bias=True)
+        (drop_path): Identity()
+      )
+      (2): Block(
+        (dwconv): Conv2d(768, 768, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3), groups=768)
+        (norm): LayerNorm()
+        (pwconv1): Linear(in_features=768, out_features=3072, bias=True)
+        (act): GELU(approximate='none')
+        (pwconv2): Linear(in_features=3072, out_features=768, bias=True)
+        (drop_path): Identity()
+      )
+    )
+  )
+  (norm): LayerNorm((768,), eps=1e-06, elementwise_affine=True)
+  (head): Linear(in_features=768, out_features=10, bias=True)
+)
+number of params: 27827818
+LR = 0.00040000
+Batch size = 64
+Update frequent = 1
+Number of training examples = 5000
+Number of training training per epoch = 78
+Param groups = {
+  "decay": {
+    "weight_decay": 0.05,
+    "params": [
+      "downsample_layers.0.0.weight",
+      "downsample_layers.1.1.weight",
+      "downsample_layers.2.1.weight",
+      "downsample_layers.3.1.weight",
+      "stages.0.0.dwconv.weight",
+      "stages.0.0.pwconv1.weight",
+      "stages.0.0.pwconv2.weight",
+      "stages.0.1.dwconv.weight",
+      "stages.0.1.pwconv1.weight",
+      "stages.0.1.pwconv2.weight",
+      "stages.0.2.dwconv.weight",
+      "stages.0.2.pwconv1.weight",
+      "stages.0.2.pwconv2.weight",
+      "stages.1.0.dwconv.weight",
+      "stages.1.0.pwconv1.weight",
+      "stages.1.0.pwconv2.weight",
+      "stages.1.1.dwconv.weight",
+      "stages.1.1.pwconv1.weight",
+      "stages.1.1.pwconv2.weight",
+      "stages.1.2.dwconv.weight",
+      "stages.1.2.pwconv1.weight",
+      "stages.1.2.pwconv2.weight",
+      "stages.2.0.dwconv.weight",
+      "stages.2.0.pwconv1.weight",
+      "stages.2.0.pwconv2.weight",
+      "stages.2.1.dwconv.weight",
+      "stages.2.1.pwconv1.weight",
+      "stages.2.1.pwconv2.weight",
+      "stages.2.2.dwconv.weight",
+      "stages.2.2.pwconv1.weight",
+      "stages.2.2.pwconv2.weight",
+      "stages.2.3.dwconv.weight",
+      "stages.2.3.pwconv1.weight",
+      "stages.2.3.pwconv2.weight",
+      "stages.2.4.dwconv.weight",
+      "stages.2.4.pwconv1.weight",
+      "stages.2.4.pwconv2.weight",
+      "stages.2.5.dwconv.weight",
+      "stages.2.5.pwconv1.weight",
+      "stages.2.5.pwconv2.weight",
+      "stages.2.6.dwconv.weight",
+      "stages.2.6.pwconv1.weight",
+      "stages.2.6.pwconv2.weight",
+      "stages.2.7.dwconv.weight",
+      "stages.2.7.pwconv1.weight",
+      "stages.2.7.pwconv2.weight",
+      "stages.2.8.dwconv.weight",
+      "stages.2.8.pwconv1.weight",
+      "stages.2.8.pwconv2.weight",
+      "stages.3.0.dwconv.weight",
+      "stages.3.0.pwconv1.weight",
+      "stages.3.0.pwconv2.weight",
+      "stages.3.1.dwconv.weight",
+      "stages.3.1.pwconv1.weight",
+      "stages.3.1.pwconv2.weight",
+      "stages.3.2.dwconv.weight",
+      "stages.3.2.pwconv1.weight",
+      "stages.3.2.pwconv2.weight",
+      "head.weight"
+    ],
+    "lr_scale": 1.0
+  },
+  "no_decay": {
+    "weight_decay": 0.0,
+    "params": [
+      "downsample_layers.0.0.bias",
+      "downsample_layers.0.1.weight",
+      "downsample_layers.0.1.bias",
+      "downsample_layers.1.0.weight",
+      "downsample_layers.1.0.bias",
+      "downsample_layers.1.1.bias",
+      "downsample_layers.2.0.weight",
+      "downsample_layers.2.0.bias",
+      "downsample_layers.2.1.bias",
+      "downsample_layers.3.0.weight",
+      "downsample_layers.3.0.bias",
+      "downsample_layers.3.1.bias",
+      "stages.0.0.gamma",
+      "stages.0.0.dwconv.bias",
+      "stages.0.0.norm.weight",
+      "stages.0.0.norm.bias",
+      "stages.0.0.pwconv1.bias",
+      "stages.0.0.pwconv2.bias",
+      "stages.0.1.gamma",
+      "stages.0.1.dwconv.bias",
+      "stages.0.1.norm.weight",
+      "stages.0.1.norm.bias",
+      "stages.0.1.pwconv1.bias",
+      "stages.0.1.pwconv2.bias",
+      "stages.0.2.gamma",
+      "stages.0.2.dwconv.bias",
+      "stages.0.2.norm.weight",
+      "stages.0.2.norm.bias",
+      "stages.0.2.pwconv1.bias",
+      "stages.0.2.pwconv2.bias",
+      "stages.1.0.gamma",
+      "stages.1.0.dwconv.bias",
+      "stages.1.0.norm.weight",
+      "stages.1.0.norm.bias",
+      "stages.1.0.pwconv1.bias",
+      "stages.1.0.pwconv2.bias",
+      "stages.1.1.gamma",
+      "stages.1.1.dwconv.bias",
+      "stages.1.1.norm.weight",
+      "stages.1.1.norm.bias",
+      "stages.1.1.pwconv1.bias",
+      "stages.1.1.pwconv2.bias",
+      "stages.1.2.gamma",
+      "stages.1.2.dwconv.bias",
+      "stages.1.2.norm.weight",
+      "stages.1.2.norm.bias",
+      "stages.1.2.pwconv1.bias",
+      "stages.1.2.pwconv2.bias",
+      "stages.2.0.gamma",
+      "stages.2.0.dwconv.bias",
+      "stages.2.0.norm.weight",
+      "stages.2.0.norm.bias",
+      "stages.2.0.pwconv1.bias",
+      "stages.2.0.pwconv2.bias",
+      "stages.2.1.gamma",
+      "stages.2.1.dwconv.bias",
+      "stages.2.1.norm.weight",
+      "stages.2.1.norm.bias",
+      "stages.2.1.pwconv1.bias",
+      "stages.2.1.pwconv2.bias",
+      "stages.2.2.gamma",
+      "stages.2.2.dwconv.bias",
+      "stages.2.2.norm.weight",
+      "stages.2.2.norm.bias",
+      "stages.2.2.pwconv1.bias",
+      "stages.2.2.pwconv2.bias",
+      "stages.2.3.gamma",
+      "stages.2.3.dwconv.bias",
+      "stages.2.3.norm.weight",
+      "stages.2.3.norm.bias",
+      "stages.2.3.pwconv1.bias",
+      "stages.2.3.pwconv2.bias",
+      "stages.2.4.gamma",
+      "stages.2.4.dwconv.bias",
+      "stages.2.4.norm.weight",
+      "stages.2.4.norm.bias",
+      "stages.2.4.pwconv1.bias",
+      "stages.2.4.pwconv2.bias",
+      "stages.2.5.gamma",
+      "stages.2.5.dwconv.bias",
+      "stages.2.5.norm.weight",
+      "stages.2.5.norm.bias",
+      "stages.2.5.pwconv1.bias",
+      "stages.2.5.pwconv2.bias",
+      "stages.2.6.gamma",
+      "stages.2.6.dwconv.bias",
+      "stages.2.6.norm.weight",
+      "stages.2.6.norm.bias",
+      "stages.2.6.pwconv1.bias",
+      "stages.2.6.pwconv2.bias",
+      "stages.2.7.gamma",
+      "stages.2.7.dwconv.bias",
+      "stages.2.7.norm.weight",
+      "stages.2.7.norm.bias",
+      "stages.2.7.pwconv1.bias",
+      "stages.2.7.pwconv2.bias",
+      "stages.2.8.gamma",
+      "stages.2.8.dwconv.bias",
+      "stages.2.8.norm.weight",
+      "stages.2.8.norm.bias",
+      "stages.2.8.pwconv1.bias",
+      "stages.2.8.pwconv2.bias",
+      "stages.3.0.gamma",
+      "stages.3.0.dwconv.bias",
+      "stages.3.0.norm.weight",
+      "stages.3.0.norm.bias",
+      "stages.3.0.pwconv1.bias",
+      "stages.3.0.pwconv2.bias",
+      "stages.3.1.gamma",
+      "stages.3.1.dwconv.bias",
+      "stages.3.1.norm.weight",
+      "stages.3.1.norm.bias",
+      "stages.3.1.pwconv1.bias",
+      "stages.3.1.pwconv2.bias",
+      "stages.3.2.gamma",
+      "stages.3.2.dwconv.bias",
+      "stages.3.2.norm.weight",
+      "stages.3.2.norm.bias",
+      "stages.3.2.pwconv1.bias",
+      "stages.3.2.pwconv2.bias",
+      "norm.weight",
+      "norm.bias",
+      "head.bias"
+    ],
+    "lr_scale": 1.0
+  }
+}
+Use Cosine LR scheduler
+Set warmup steps = 0
+Set warmup steps = 0
+Max WD = 0.0500000, Min WD = 0.0500000
+criterion = LabelSmoothingCrossEntropy()
+Auto resume checkpoint: 
+Start training for 10 epochs
+Epoch: [0]  [ 0/78]  eta: 0:03:47  lr: 0.000400  min_lr: 0.000400  loss: 2.3093 (2.3093)  class_acc: 0.0938 (0.0938)  weight_decay: 0.0500 (0.0500)  time: 2.9146  data: 0.5013  max mem: 7656
+Epoch: [0]  [10/78]  eta: 0:01:31  lr: 0.000400  min_lr: 0.000400  loss: 2.0632 (2.0859)  class_acc: 0.3906 (0.3537)  weight_decay: 0.0500 (0.0500)  time: 1.3503  data: 0.0457  max mem: 7978
+Epoch: [0]  [20/78]  eta: 0:01:14  lr: 0.000399  min_lr: 0.000399  loss: 1.8452 (1.9020)  class_acc: 0.4531 (0.4405)  weight_decay: 0.0500 (0.0500)  time: 1.1952  data: 0.0001  max mem: 7978
+Epoch: [0]  [30/78]  eta: 0:01:00  lr: 0.000399  min_lr: 0.000399  loss: 1.5027 (1.7266)  class_acc: 0.5938 (0.5081)  weight_decay: 0.0500 (0.0500)  time: 1.1956  data: 0.0001  max mem: 7978
+Epoch: [0]  [40/78]  eta: 0:00:46  lr: 0.000397  min_lr: 0.000397  loss: 1.3169 (1.6174)  class_acc: 0.6562 (0.5473)  weight_decay: 0.0500 (0.0500)  time: 1.1944  data: 0.0001  max mem: 7978
+Epoch: [0]  [50/78]  eta: 0:00:34  lr: 0.000396  min_lr: 0.000396  loss: 1.2412 (1.5318)  class_acc: 0.6875 (0.5787)  weight_decay: 0.0500 (0.0500)  time: 1.1948  data: 0.0002  max mem: 7978
+Epoch: [0]  [60/78]  eta: 0:00:22  lr: 0.000394  min_lr: 0.000394  loss: 1.2274 (1.4845)  class_acc: 0.6875 (0.5945)  weight_decay: 0.0500 (0.0500)  time: 1.1941  data: 0.0002  max mem: 7978
+Epoch: [0]  [70/78]  eta: 0:00:09  lr: 0.000392  min_lr: 0.000392  loss: 1.1900 (1.4380)  class_acc: 0.6719 (0.6116)  weight_decay: 0.0500 (0.0500)  time: 1.2904  data: 0.0001  max mem: 7978
+Epoch: [0]  [77/78]  eta: 0:00:01  lr: 0.000390  min_lr: 0.000390  loss: 1.1900 (1.4190)  class_acc: 0.6875 (0.6184)  weight_decay: 0.0500 (0.0500)  time: 1.4041  data: 0.0001  max mem: 7978
+Epoch: [0] Total time: 0:01:39 (1.2707 s / it)
+Averaged stats: lr: 0.000390  min_lr: 0.000390  loss: 1.1900 (1.4190)  class_acc: 0.6875 (0.6184)  weight_decay: 0.0500 (0.0500)
+Test:  [ 0/11]  eta: 0:00:10  loss: 0.2903 (0.2903)  acc1: 93.7500 (93.7500)  acc5: 100.0000 (100.0000)  time: 0.9139  data: 0.3783  max mem: 7978
+Test:  [10/11]  eta: 0:00:00  loss: 0.3778 (0.3882)  acc1: 91.6667 (90.7000)  acc5: 100.0000 (99.3000)  time: 0.2497  data: 0.0345  max mem: 7978
+Test: Total time: 0:00:02 (0.2524 s / it)
+* Acc@1 90.700 Acc@5 99.300 loss 0.388
+Accuracy of the model on the 1000 test images: 90.7%
+Max accuracy: 90.70%
+Epoch: [1]  [ 0/78]  eta: 0:02:08  lr: 0.000390  min_lr: 0.000390  loss: 1.0385 (1.0385)  class_acc: 0.7656 (0.7656)  weight_decay: 0.0500 (0.0500)  time: 1.6428  data: 0.2486  max mem: 7978
+Epoch: [1]  [10/78]  eta: 0:01:52  lr: 0.000388  min_lr: 0.000388  loss: 1.1217 (1.0713)  class_acc: 0.7500 (0.7500)  weight_decay: 0.0500 (0.0500)  time: 1.6471  data: 0.0228  max mem: 7978
+Epoch: [1]  [20/78]  eta: 0:01:34  lr: 0.000385  min_lr: 0.000385  loss: 1.1218 (1.1029)  class_acc: 0.7188 (0.7388)  weight_decay: 0.0500 (0.0500)  time: 1.6332  data: 0.0001  max mem: 7978
+Epoch: [1]  [30/78]  eta: 0:01:18  lr: 0.000381  min_lr: 0.000381  loss: 1.1393 (1.1265)  class_acc: 0.7031 (0.7233)  weight_decay: 0.0500 (0.0500)  time: 1.6223  data: 0.0002  max mem: 7978
+Epoch: [1]  [40/78]  eta: 0:01:02  lr: 0.000378  min_lr: 0.000378  loss: 1.1256 (1.1154)  class_acc: 0.7188 (0.7275)  weight_decay: 0.0500 (0.0500)  time: 1.6518  data: 0.0002  max mem: 7978
+Epoch: [1]  [50/78]  eta: 0:00:46  lr: 0.000374  min_lr: 0.000374  loss: 1.0513 (1.0970)  class_acc: 0.7500 (0.7374)  weight_decay: 0.0500 (0.0500)  time: 1.6745  data: 0.0002  max mem: 7978
+Epoch: [1]  [60/78]  eta: 0:00:29  lr: 0.000370  min_lr: 0.000370  loss: 1.0513 (1.0902)  class_acc: 0.7500 (0.7405)  weight_decay: 0.0500 (0.0500)  time: 1.6649  data: 0.0002  max mem: 7978
+Epoch: [1]  [70/78]  eta: 0:00:13  lr: 0.000366  min_lr: 0.000366  loss: 1.0605 (1.0827)  class_acc: 0.7344 (0.7434)  weight_decay: 0.0500 (0.0500)  time: 1.6678  data: 0.0001  max mem: 7978
+Epoch: [1]  [77/78]  eta: 0:00:01  lr: 0.000362  min_lr: 0.000362  loss: 1.0279 (1.0731)  class_acc: 0.7656 (0.7474)  weight_decay: 0.0500 (0.0500)  time: 1.6626  data: 0.0001  max mem: 7978
+Epoch: [1] Total time: 0:02:08 (1.6531 s / it)
+Averaged stats: lr: 0.000362  min_lr: 0.000362  loss: 1.0279 (1.0731)  class_acc: 0.7656 (0.7474)  weight_decay: 0.0500 (0.0500)
+Test:  [ 0/11]  eta: 0:00:06  loss: 0.2725 (0.2725)  acc1: 94.7917 (94.7917)  acc5: 100.0000 (100.0000)  time: 0.5728  data: 0.3792  max mem: 7978
+Test:  [10/11]  eta: 0:00:00  loss: 0.2958 (0.3201)  acc1: 94.7917 (92.7000)  acc5: 100.0000 (99.6000)  time: 0.2283  data: 0.0346  max mem: 7978
+Test: Total time: 0:00:02 (0.2308 s / it)
+* Acc@1 92.700 Acc@5 99.600 loss 0.320
+Accuracy of the model on the 1000 test images: 92.7%
+Max accuracy: 92.70%
+Epoch: [2]  [ 0/78]  eta: 0:02:36  lr: 0.000362  min_lr: 0.000362  loss: 1.0884 (1.0884)  class_acc: 0.7188 (0.7188)  weight_decay: 0.0500 (0.0500)  time: 2.0001  data: 0.3214  max mem: 7978
+Epoch: [2]  [10/78]  eta: 0:01:53  lr: 0.000357  min_lr: 0.000357  loss: 0.9780 (0.9982)  class_acc: 0.7969 (0.7784)  weight_decay: 0.0500 (0.0500)  time: 1.6631  data: 0.0293  max mem: 7978
+Epoch: [2]  [20/78]  eta: 0:01:35  lr: 0.000352  min_lr: 0.000352  loss: 0.9688 (1.0077)  class_acc: 0.7812 (0.7768)  weight_decay: 0.0500 (0.0500)  time: 1.6375  data: 0.0001  max mem: 7978
+Epoch: [2]  [30/78]  eta: 0:01:19  lr: 0.000347  min_lr: 0.000347  loss: 0.9688 (0.9871)  class_acc: 0.7812 (0.7838)  weight_decay: 0.0500 (0.0500)  time: 1.6526  data: 0.0001  max mem: 7978
+Epoch: [2]  [40/78]  eta: 0:01:02  lr: 0.000341  min_lr: 0.000341  loss: 0.9996 (1.0050)  class_acc: 0.7656 (0.7782)  weight_decay: 0.0500 (0.0500)  time: 1.6389  data: 0.0002  max mem: 7978
+Epoch: [2]  [50/78]  eta: 0:00:46  lr: 0.000335  min_lr: 0.000335  loss: 1.0555 (1.0089)  class_acc: 0.7656 (0.7770)  weight_decay: 0.0500 (0.0500)  time: 1.6328  data: 0.0001  max mem: 7978
+Epoch: [2]  [60/78]  eta: 0:00:29  lr: 0.000329  min_lr: 0.000329  loss: 1.0430 (1.0167)  class_acc: 0.7500 (0.7736)  weight_decay: 0.0500 (0.0500)  time: 1.6378  data: 0.0002  max mem: 7978
+Epoch: [2]  [70/78]  eta: 0:00:13  lr: 0.000323  min_lr: 0.000323  loss: 0.9804 (1.0067)  class_acc: 0.7812 (0.7782)  weight_decay: 0.0500 (0.0500)  time: 1.6225  data: 0.0001  max mem: 7978
+Epoch: [2]  [77/78]  eta: 0:00:01  lr: 0.000318  min_lr: 0.000318  loss: 0.9381 (1.0034)  class_acc: 0.7969 (0.7796)  weight_decay: 0.0500 (0.0500)  time: 1.6360  data: 0.0001  max mem: 7978
+Epoch: [2] Total time: 0:02:08 (1.6423 s / it)
+Averaged stats: lr: 0.000318  min_lr: 0.000318  loss: 0.9381 (1.0034)  class_acc: 0.7969 (0.7796)  weight_decay: 0.0500 (0.0500)
+Test:  [ 0/11]  eta: 0:00:06  loss: 0.2050 (0.2050)  acc1: 96.8750 (96.8750)  acc5: 100.0000 (100.0000)  time: 0.6074  data: 0.4082  max mem: 7978
+Test:  [10/11]  eta: 0:00:00  loss: 0.2809 (0.2854)  acc1: 93.7500 (93.0000)  acc5: 100.0000 (99.8000)  time: 0.2309  data: 0.0372  max mem: 7978
+Test: Total time: 0:00:02 (0.2336 s / it)
+* Acc@1 93.000 Acc@5 99.800 loss 0.285
+Accuracy of the model on the 1000 test images: 93.0%
+Max accuracy: 93.00%
+Epoch: [3]  [ 0/78]  eta: 0:02:37  lr: 0.000318  min_lr: 0.000318  loss: 1.0080 (1.0080)  class_acc: 0.7812 (0.7812)  weight_decay: 0.0500 (0.0500)  time: 2.0171  data: 0.3392  max mem: 7978
+Epoch: [3]  [10/78]  eta: 0:01:55  lr: 0.000311  min_lr: 0.000311  loss: 1.0442 (1.0657)  class_acc: 0.7656 (0.7585)  weight_decay: 0.0500 (0.0500)  time: 1.6973  data: 0.0310  max mem: 7978
+Epoch: [3]  [20/78]  eta: 0:01:39  lr: 0.000304  min_lr: 0.000304  loss: 1.0232 (1.0195)  class_acc: 0.7656 (0.7693)  weight_decay: 0.0500 (0.0500)  time: 1.6962  data: 0.0002  max mem: 7978
+Epoch: [3]  [30/78]  eta: 0:01:23  lr: 0.000297  min_lr: 0.000297  loss: 0.9931 (1.0204)  class_acc: 0.7656 (0.7676)  weight_decay: 0.0500 (0.0500)  time: 1.7545  data: 0.0002  max mem: 7978
+Epoch: [3]  [40/78]  eta: 0:01:05  lr: 0.000290  min_lr: 0.000290  loss: 0.9860 (1.0019)  class_acc: 0.7656 (0.7759)  weight_decay: 0.0500 (0.0500)  time: 1.7314  data: 0.0002  max mem: 7978
+Epoch: [3]  [50/78]  eta: 0:00:49  lr: 0.000283  min_lr: 0.000283  loss: 0.9538 (0.9929)  class_acc: 0.7969 (0.7812)  weight_decay: 0.0500 (0.0500)  time: 1.8062  data: 0.0002  max mem: 7978
+Epoch: [3]  [60/78]  eta: 0:00:31  lr: 0.000276  min_lr: 0.000276  loss: 0.9535 (0.9870)  class_acc: 0.7969 (0.7846)  weight_decay: 0.0500 (0.0500)  time: 1.8724  data: 0.0002  max mem: 7978
+Epoch: [3]  [70/78]  eta: 0:00:14  lr: 0.000268  min_lr: 0.000268  loss: 0.9319 (0.9790)  class_acc: 0.8125 (0.7901)  weight_decay: 0.0500 (0.0500)  time: 1.8045  data: 0.0002  max mem: 7978
+Epoch: [3]  [77/78]  eta: 0:00:01  lr: 0.000263  min_lr: 0.000263  loss: 0.9083 (0.9760)  class_acc: 0.8281 (0.7913)  weight_decay: 0.0500 (0.0500)  time: 1.7999  data: 0.0001  max mem: 7978
+Epoch: [3] Total time: 0:02:18 (1.7781 s / it)
+Averaged stats: lr: 0.000263  min_lr: 0.000263  loss: 0.9083 (0.9760)  class_acc: 0.8281 (0.7913)  weight_decay: 0.0500 (0.0500)
+Test:  [ 0/11]  eta: 0:00:06  loss: 0.2376 (0.2376)  acc1: 94.7917 (94.7917)  acc5: 100.0000 (100.0000)  time: 0.5741  data: 0.3044  max mem: 7978
+Test:  [10/11]  eta: 0:00:00  loss: 0.2517 (0.2839)  acc1: 94.7917 (93.5000)  acc5: 100.0000 (99.9000)  time: 0.2769  data: 0.0278  max mem: 7978
+Test: Total time: 0:00:03 (0.2792 s / it)
+* Acc@1 93.500 Acc@5 99.900 loss 0.284
+Accuracy of the model on the 1000 test images: 93.5%
+Max accuracy: 93.50%
+Epoch: [4]  [ 0/78]  eta: 0:02:50  lr: 0.000262  min_lr: 0.000262  loss: 0.8446 (0.8446)  class_acc: 0.8594 (0.8594)  weight_decay: 0.0500 (0.0500)  time: 2.1882  data: 0.3028  max mem: 7978
+Epoch: [4]  [10/78]  eta: 0:02:10  lr: 0.000254  min_lr: 0.000254  loss: 0.9006 (0.8906)  class_acc: 0.8438 (0.8366)  weight_decay: 0.0500 (0.0500)  time: 1.9236  data: 0.0277  max mem: 7978
+Epoch: [4]  [20/78]  eta: 0:01:50  lr: 0.000247  min_lr: 0.000247  loss: 0.9327 (0.9439)  class_acc: 0.8125 (0.8147)  weight_decay: 0.0500 (0.0500)  time: 1.8925  data: 0.0002  max mem: 7978
+Epoch: [4]  [30/78]  eta: 0:01:31  lr: 0.000239  min_lr: 0.000239  loss: 0.9608 (0.9400)  class_acc: 0.7969 (0.8100)  weight_decay: 0.0500 (0.0500)  time: 1.8815  data: 0.0002  max mem: 7978
+Epoch: [4]  [40/78]  eta: 0:01:13  lr: 0.000231  min_lr: 0.000231  loss: 0.9351 (0.9374)  class_acc: 0.7812 (0.8098)  weight_decay: 0.0500 (0.0500)  time: 1.9725  data: 0.0002  max mem: 7978
+Epoch: [4]  [50/78]  eta: 0:00:53  lr: 0.000223  min_lr: 0.000223  loss: 0.9078 (0.9360)  class_acc: 0.8125 (0.8088)  weight_decay: 0.0500 (0.0500)  time: 1.9704  data: 0.0002  max mem: 7978
+Epoch: [4]  [60/78]  eta: 0:00:34  lr: 0.000215  min_lr: 0.000215  loss: 0.8880 (0.9226)  class_acc: 0.8281 (0.8125)  weight_decay: 0.0500 (0.0500)  time: 1.8607  data: 0.0002  max mem: 7978
+Epoch: [4]  [70/78]  eta: 0:00:15  lr: 0.000207  min_lr: 0.000207  loss: 0.8768 (0.9194)  class_acc: 0.8281 (0.8145)  weight_decay: 0.0500 (0.0500)  time: 1.8639  data: 0.0001  max mem: 7978
+Epoch: [4]  [77/78]  eta: 0:00:01  lr: 0.000201  min_lr: 0.000201  loss: 0.8956 (0.9177)  class_acc: 0.8125 (0.8163)  weight_decay: 0.0500 (0.0500)  time: 1.9175  data: 0.0001  max mem: 7978
+Epoch: [4] Total time: 0:02:29 (1.9127 s / it)
+Averaged stats: lr: 0.000201  min_lr: 0.000201  loss: 0.8956 (0.9177)  class_acc: 0.8125 (0.8163)  weight_decay: 0.0500 (0.0500)
+Test:  [ 0/11]  eta: 0:00:06  loss: 0.1966 (0.1966)  acc1: 95.8333 (95.8333)  acc5: 100.0000 (100.0000)  time: 0.5820  data: 0.3196  max mem: 7978
+Test:  [10/11]  eta: 0:00:00  loss: 0.2506 (0.2679)  acc1: 93.7500 (93.5000)  acc5: 100.0000 (99.7000)  time: 0.3024  data: 0.0292  max mem: 7978
+Test: Total time: 0:00:03 (0.3050 s / it)
+* Acc@1 93.500 Acc@5 99.700 loss 0.268
+Accuracy of the model on the 1000 test images: 93.5%
+Max accuracy: 93.50%
+Epoch: [5]  [ 0/78]  eta: 0:03:14  lr: 0.000200  min_lr: 0.000200  loss: 0.9176 (0.9176)  class_acc: 0.8125 (0.8125)  weight_decay: 0.0500 (0.0500)  time: 2.4949  data: 0.3089  max mem: 7978
+Epoch: [5]  [10/78]  eta: 0:02:10  lr: 0.000192  min_lr: 0.000192  loss: 0.8935 (0.9102)  class_acc: 0.8125 (0.8182)  weight_decay: 0.0500 (0.0500)  time: 1.9213  data: 0.0282  max mem: 7978
+Epoch: [5]  [20/78]  eta: 0:01:50  lr: 0.000184  min_lr: 0.000184  loss: 0.8598 (0.8897)  class_acc: 0.8281 (0.8296)  weight_decay: 0.0500 (0.0500)  time: 1.8729  data: 0.0001  max mem: 7978
+Epoch: [5]  [30/78]  eta: 0:01:30  lr: 0.000176  min_lr: 0.000176  loss: 0.8317 (0.8768)  class_acc: 0.8438 (0.8347)  weight_decay: 0.0500 (0.0500)  time: 1.8702  data: 0.0002  max mem: 7978
+Epoch: [5]  [40/78]  eta: 0:01:11  lr: 0.000168  min_lr: 0.000168  loss: 0.8655 (0.8755)  class_acc: 0.8281 (0.8346)  weight_decay: 0.0500 (0.0500)  time: 1.8824  data: 0.0002  max mem: 7978
+Epoch: [5]  [50/78]  eta: 0:00:53  lr: 0.000161  min_lr: 0.000161  loss: 0.8707 (0.8807)  class_acc: 0.8281 (0.8315)  weight_decay: 0.0500 (0.0500)  time: 1.9170  data: 0.0002  max mem: 7978
+Epoch: [5]  [60/78]  eta: 0:00:34  lr: 0.000153  min_lr: 0.000153  loss: 0.8589 (0.8765)  class_acc: 0.8438 (0.8340)  weight_decay: 0.0500 (0.0500)  time: 1.8956  data: 0.0002  max mem: 7978
+Epoch: [5]  [70/78]  eta: 0:00:15  lr: 0.000145  min_lr: 0.000145  loss: 0.8506 (0.8710)  class_acc: 0.8438 (0.8365)  weight_decay: 0.0500 (0.0500)  time: 1.8432  data: 0.0001  max mem: 7978
+Epoch: [5]  [77/78]  eta: 0:00:01  lr: 0.000140  min_lr: 0.000140  loss: 0.8506 (0.8677)  class_acc: 0.8438 (0.8373)  weight_decay: 0.0500 (0.0500)  time: 1.8449  data: 0.0001  max mem: 7978
+Epoch: [5] Total time: 0:02:27 (1.8850 s / it)
+Averaged stats: lr: 0.000140  min_lr: 0.000140  loss: 0.8506 (0.8677)  class_acc: 0.8438 (0.8373)  weight_decay: 0.0500 (0.0500)
+Test:  [ 0/11]  eta: 0:00:06  loss: 0.1617 (0.1617)  acc1: 97.9167 (97.9167)  acc5: 100.0000 (100.0000)  time: 0.6033  data: 0.3447  max mem: 7978
+Test:  [10/11]  eta: 0:00:00  loss: 0.2359 (0.2430)  acc1: 95.8333 (95.1000)  acc5: 100.0000 (99.8000)  time: 0.2821  data: 0.0314  max mem: 7978
+Test: Total time: 0:00:03 (0.2845 s / it)
+* Acc@1 95.100 Acc@5 99.800 loss 0.243
+Accuracy of the model on the 1000 test images: 95.1%
+Max accuracy: 95.10%
+Epoch: [6]  [ 0/78]  eta: 0:02:50  lr: 0.000139  min_lr: 0.000139  loss: 0.9931 (0.9931)  class_acc: 0.8125 (0.8125)  weight_decay: 0.0500 (0.0500)  time: 2.1829  data: 0.3272  max mem: 7978
+Epoch: [6]  [10/78]  eta: 0:02:10  lr: 0.000131  min_lr: 0.000131  loss: 0.8417 (0.8350)  class_acc: 0.8594 (0.8594)  weight_decay: 0.0500 (0.0500)  time: 1.9191  data: 0.0299  max mem: 7978
+Epoch: [6]  [20/78]  eta: 0:01:50  lr: 0.000124  min_lr: 0.000124  loss: 0.8417 (0.8557)  class_acc: 0.8594 (0.8519)  weight_decay: 0.0500 (0.0500)  time: 1.8913  data: 0.0002  max mem: 7978
+Epoch: [6]  [30/78]  eta: 0:01:30  lr: 0.000116  min_lr: 0.000116  loss: 0.8133 (0.8364)  class_acc: 0.8594 (0.8579)  weight_decay: 0.0500 (0.0500)  time: 1.8788  data: 0.0002  max mem: 7978
+Epoch: [6]  [40/78]  eta: 0:01:11  lr: 0.000109  min_lr: 0.000109  loss: 0.7753 (0.8349)  class_acc: 0.8750 (0.8586)  weight_decay: 0.0500 (0.0500)  time: 1.8832  data: 0.0002  max mem: 7978
+Epoch: [6]  [50/78]  eta: 0:00:52  lr: 0.000102  min_lr: 0.000102  loss: 0.8266 (0.8341)  class_acc: 0.8594 (0.8578)  weight_decay: 0.0500 (0.0500)  time: 1.8780  data: 0.0002  max mem: 7978
+Epoch: [6]  [60/78]  eta: 0:00:33  lr: 0.000095  min_lr: 0.000095  loss: 0.8109 (0.8311)  class_acc: 0.8594 (0.8581)  weight_decay: 0.0500 (0.0500)  time: 1.8577  data: 0.0002  max mem: 7978
+Epoch: [6]  [70/78]  eta: 0:00:15  lr: 0.000088  min_lr: 0.000088  loss: 0.7986 (0.8304)  class_acc: 0.8594 (0.8567)  weight_decay: 0.0500 (0.0500)  time: 1.8806  data: 0.0001  max mem: 7978
+Epoch: [6]  [77/78]  eta: 0:00:01  lr: 0.000084  min_lr: 0.000084  loss: 0.8018 (0.8301)  class_acc: 0.8594 (0.8560)  weight_decay: 0.0500 (0.0500)  time: 1.8727  data: 0.0001  max mem: 7978
+Epoch: [6] Total time: 0:02:26 (1.8834 s / it)
+Averaged stats: lr: 0.000084  min_lr: 0.000084  loss: 0.8018 (0.8301)  class_acc: 0.8594 (0.8560)  weight_decay: 0.0500 (0.0500)
+Test:  [ 0/11]  eta: 0:00:06  loss: 0.1598 (0.1598)  acc1: 97.9167 (97.9167)  acc5: 100.0000 (100.0000)  time: 0.5703  data: 0.2900  max mem: 7978
+Test:  [10/11]  eta: 0:00:00  loss: 0.2431 (0.2449)  acc1: 94.7917 (95.4000)  acc5: 100.0000 (99.7000)  time: 0.2780  data: 0.0265  max mem: 7978
+Test: Total time: 0:00:03 (0.2805 s / it)
+* Acc@1 95.400 Acc@5 99.700 loss 0.245
+Accuracy of the model on the 1000 test images: 95.4%
+Max accuracy: 95.40%
+Epoch: [7]  [ 0/78]  eta: 0:02:56  lr: 0.000083  min_lr: 0.000083  loss: 0.8045 (0.8045)  class_acc: 0.8281 (0.8281)  weight_decay: 0.0500 (0.0500)  time: 2.2623  data: 0.3714  max mem: 7978
+Epoch: [7]  [10/78]  eta: 0:02:11  lr: 0.000077  min_lr: 0.000077  loss: 0.8259 (0.8430)  class_acc: 0.8438 (0.8494)  weight_decay: 0.0500 (0.0500)  time: 1.9390  data: 0.0339  max mem: 7978
+Epoch: [7]  [20/78]  eta: 0:01:52  lr: 0.000071  min_lr: 0.000071  loss: 0.8259 (0.8336)  class_acc: 0.8594 (0.8579)  weight_decay: 0.0500 (0.0500)  time: 1.9146  data: 0.0002  max mem: 7978
+Epoch: [7]  [30/78]  eta: 0:01:31  lr: 0.000065  min_lr: 0.000065  loss: 0.8050 (0.8259)  class_acc: 0.8594 (0.8594)  weight_decay: 0.0500 (0.0500)  time: 1.8923  data: 0.0001  max mem: 7978
+Epoch: [7]  [40/78]  eta: 0:01:12  lr: 0.000059  min_lr: 0.000059  loss: 0.8150 (0.8261)  class_acc: 0.8594 (0.8601)  weight_decay: 0.0500 (0.0500)  time: 1.8655  data: 0.0002  max mem: 7978
+Epoch: [7]  [50/78]  eta: 0:00:52  lr: 0.000053  min_lr: 0.000053  loss: 0.8318 (0.8221)  class_acc: 0.8594 (0.8612)  weight_decay: 0.0500 (0.0500)  time: 1.8556  data: 0.0002  max mem: 7978
+Epoch: [7]  [60/78]  eta: 0:00:33  lr: 0.000048  min_lr: 0.000048  loss: 0.8018 (0.8189)  class_acc: 0.8750 (0.8607)  weight_decay: 0.0500 (0.0500)  time: 1.8567  data: 0.0002  max mem: 7978
+Epoch: [7]  [70/78]  eta: 0:00:15  lr: 0.000043  min_lr: 0.000043  loss: 0.8025 (0.8185)  class_acc: 0.8750 (0.8627)  weight_decay: 0.0500 (0.0500)  time: 1.8773  data: 0.0002  max mem: 7978
+Epoch: [7]  [77/78]  eta: 0:00:01  lr: 0.000040  min_lr: 0.000040  loss: 0.8168 (0.8199)  class_acc: 0.8750 (0.8610)  weight_decay: 0.0500 (0.0500)  time: 1.8677  data: 0.0001  max mem: 7978
+Epoch: [7] Total time: 0:02:26 (1.8836 s / it)
+Averaged stats: lr: 0.000040  min_lr: 0.000040  loss: 0.8168 (0.8199)  class_acc: 0.8750 (0.8610)  weight_decay: 0.0500 (0.0500)
+Test:  [ 0/11]  eta: 0:00:05  loss: 0.1729 (0.1729)  acc1: 96.8750 (96.8750)  acc5: 100.0000 (100.0000)  time: 0.5218  data: 0.2379  max mem: 7978
+Test:  [10/11]  eta: 0:00:00  loss: 0.2137 (0.2349)  acc1: 95.8333 (95.5000)  acc5: 100.0000 (99.6000)  time: 0.2753  data: 0.0217  max mem: 7978
+Test: Total time: 0:00:03 (0.2778 s / it)
+* Acc@1 95.500 Acc@5 99.600 loss 0.235
+Accuracy of the model on the 1000 test images: 95.5%
+Max accuracy: 95.50%
+Epoch: [8]  [ 0/78]  eta: 0:03:06  lr: 0.000039  min_lr: 0.000039  loss: 0.8623 (0.8623)  class_acc: 0.8125 (0.8125)  weight_decay: 0.0500 (0.0500)  time: 2.3883  data: 0.2987  max mem: 7978
+Epoch: [8]  [10/78]  eta: 0:02:13  lr: 0.000035  min_lr: 0.000035  loss: 0.8278 (0.8161)  class_acc: 0.8594 (0.8565)  weight_decay: 0.0500 (0.0500)  time: 1.9668  data: 0.0273  max mem: 7978
+Epoch: [8]  [20/78]  eta: 0:01:52  lr: 0.000030  min_lr: 0.000030  loss: 0.7910 (0.8064)  class_acc: 0.8750 (0.8638)  weight_decay: 0.0500 (0.0500)  time: 1.9228  data: 0.0001  max mem: 7978
+Epoch: [8]  [30/78]  eta: 0:01:32  lr: 0.000026  min_lr: 0.000026  loss: 0.7898 (0.8085)  class_acc: 0.8750 (0.8594)  weight_decay: 0.0500 (0.0500)  time: 1.9024  data: 0.0002  max mem: 7978
+Epoch: [8]  [40/78]  eta: 0:01:12  lr: 0.000022  min_lr: 0.000022  loss: 0.7951 (0.8156)  class_acc: 0.8594 (0.8559)  weight_decay: 0.0500 (0.0500)  time: 1.8514  data: 0.0002  max mem: 7978
+Epoch: [8]  [50/78]  eta: 0:00:53  lr: 0.000019  min_lr: 0.000019  loss: 0.7934 (0.8112)  class_acc: 0.8750 (0.8585)  weight_decay: 0.0500 (0.0500)  time: 1.8441  data: 0.0002  max mem: 7978
+Epoch: [8]  [60/78]  eta: 0:00:33  lr: 0.000016  min_lr: 0.000016  loss: 0.7746 (0.8080)  class_acc: 0.8750 (0.8624)  weight_decay: 0.0500 (0.0500)  time: 1.8495  data: 0.0002  max mem: 7978
+Epoch: [8]  [70/78]  eta: 0:00:15  lr: 0.000013  min_lr: 0.000013  loss: 0.7765 (0.8076)  class_acc: 0.8750 (0.8640)  weight_decay: 0.0500 (0.0500)  time: 1.9122  data: 0.0002  max mem: 7978
+Epoch: [8]  [77/78]  eta: 0:00:01  lr: 0.000011  min_lr: 0.000011  loss: 0.7765 (0.8046)  class_acc: 0.8750 (0.8658)  weight_decay: 0.0500 (0.0500)  time: 2.0417  data: 0.0001  max mem: 7978
+Epoch: [8] Total time: 0:02:30 (1.9273 s / it)
+Averaged stats: lr: 0.000011  min_lr: 0.000011  loss: 0.7765 (0.8046)  class_acc: 0.8750 (0.8658)  weight_decay: 0.0500 (0.0500)
+Test:  [ 0/11]  eta: 0:00:07  loss: 0.1717 (0.1717)  acc1: 96.8750 (96.8750)  acc5: 100.0000 (100.0000)  time: 0.6430  data: 0.2791  max mem: 7978
+Test:  [10/11]  eta: 0:00:00  loss: 0.2043 (0.2306)  acc1: 95.8333 (95.5000)  acc5: 100.0000 (99.7000)  time: 0.3358  data: 0.0255  max mem: 7978
+Test: Total time: 0:00:03 (0.3382 s / it)
+* Acc@1 95.500 Acc@5 99.700 loss 0.231
+Accuracy of the model on the 1000 test images: 95.5%
+Max accuracy: 95.50%
+Epoch: [9]  [ 0/78]  eta: 0:03:31  lr: 0.000011  min_lr: 0.000011  loss: 0.8289 (0.8289)  class_acc: 0.8750 (0.8750)  weight_decay: 0.0500 (0.0500)  time: 2.7136  data: 0.2935  max mem: 7978
+Epoch: [9]  [10/78]  eta: 0:02:21  lr: 0.000008  min_lr: 0.000008  loss: 0.8193 (0.8316)  class_acc: 0.8594 (0.8580)  weight_decay: 0.0500 (0.0500)  time: 2.0808  data: 0.0269  max mem: 7978
+Epoch: [9]  [20/78]  eta: 0:01:54  lr: 0.000006  min_lr: 0.000006  loss: 0.8149 (0.8241)  class_acc: 0.8594 (0.8668)  weight_decay: 0.0500 (0.0500)  time: 1.9340  data: 0.0002  max mem: 7978
+Epoch: [9]  [30/78]  eta: 0:01:33  lr: 0.000005  min_lr: 0.000005  loss: 0.7653 (0.8095)  class_acc: 0.8750 (0.8690)  weight_decay: 0.0500 (0.0500)  time: 1.8667  data: 0.0002  max mem: 7978
+Epoch: [9]  [40/78]  eta: 0:01:12  lr: 0.000003  min_lr: 0.000003  loss: 0.7522 (0.8031)  class_acc: 0.8750 (0.8716)  weight_decay: 0.0500 (0.0500)  time: 1.8662  data: 0.0002  max mem: 7978
+Epoch: [9]  [50/78]  eta: 0:00:54  lr: 0.000002  min_lr: 0.000002  loss: 0.7540 (0.8010)  class_acc: 0.8750 (0.8707)  weight_decay: 0.0500 (0.0500)  time: 1.9765  data: 0.0002  max mem: 7978
+Epoch: [9]  [60/78]  eta: 0:00:35  lr: 0.000002  min_lr: 0.000002  loss: 0.7880 (0.7976)  class_acc: 0.8750 (0.8712)  weight_decay: 0.0500 (0.0500)  time: 2.0068  data: 0.0002  max mem: 7978
+Epoch: [9]  [70/78]  eta: 0:00:15  lr: 0.000001  min_lr: 0.000001  loss: 0.7728 (0.7996)  class_acc: 0.8594 (0.8699)  weight_decay: 0.0500 (0.0500)  time: 1.9146  data: 0.0002  max mem: 7978
+Epoch: [9]  [77/78]  eta: 0:00:01  lr: 0.000001  min_lr: 0.000001  loss: 0.7609 (0.7947)  class_acc: 0.8594 (0.8720)  weight_decay: 0.0500 (0.0500)  time: 1.8751  data: 0.0001  max mem: 7978
+Epoch: [9] Total time: 0:02:30 (1.9341 s / it)
+Averaged stats: lr: 0.000001  min_lr: 0.000001  loss: 0.7609 (0.7947)  class_acc: 0.8594 (0.8720)  weight_decay: 0.0500 (0.0500)
+Test:  [ 0/11]  eta: 0:00:06  loss: 0.1670 (0.1670)  acc1: 97.9167 (97.9167)  acc5: 100.0000 (100.0000)  time: 0.5958  data: 0.3285  max mem: 7978
+Test:  [10/11]  eta: 0:00:00  loss: 0.2088 (0.2302)  acc1: 96.8750 (95.8000)  acc5: 100.0000 (99.7000)  time: 0.2835  data: 0.0300  max mem: 7978
+Test: Total time: 0:00:03 (0.2858 s / it)
+* Acc@1 95.800 Acc@5 99.700 loss 0.230
+Accuracy of the model on the 1000 test images: 95.8%
+Max accuracy: 95.80%
+Training time 0:23:41
