@@ -208,7 +208,7 @@ def get_args_parser():
 class Logger(object):
     def __init__(self):
         self.terminal = sys.stdout
-        self.log = open("logfile_finetune.log", "a")
+        self.log = open("logfile.log", "a")
 
     def write(self, message):
         self.terminal.write(message)
