@@ -25,3 +25,25 @@ Was ich geändert habe am code, kannst du eh im Git log anschauen.
 
 # Observationen (für den report dann)
 * Die standard Learning Rate war beim Finetuning mega schlecht ~10%.
+
+# TODO: wiederholen von data augmentation runs
+* Gar keine Transforms (nur ToTensor())
+* Normalisieren mit imagenet mean/std
+* Normalisieren mit cifar mean/std
+* Alle CLI optionen ausschalten mit imagenet mean/std
+* Alle CLI optionen ausschalten mit cifar mean/std
+* Einzelne CLI optionen manuell hinzufügen
+* Das beste von den oberen mit den params aus dem paper probieren
+
+# TODO: mit den parametern aus dem paper trainieren
+* Beide Arten von Finetuning
+* Die andere Art von From Scratch (aber nur Epochen)
+* Andere Modelle für das Finetuning ausprobieren
+* Batchsize bei Finetuning durchprobieren (16, 32, 64, 100)
+* Mit dem --model Parameter herumspielen
+* Die beste Konfiguration auf das ganze CIFAR10 finetunen
+
+# TODO: Sachen aus dem paper reverten
+* Sachen soweit es geht aus paper reverten
+* Schauen, ob man ein originales ConvNet hernehmen kann
+* Bester Revert mit bester Data Augmentation und Hyperparametern kombinieren

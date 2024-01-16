@@ -221,7 +221,7 @@ class Logger(object):
         pass
 
 def main(args):
-    sys.stdout = Logger() # Markus: Output to console and to a log file
+    # sys.stdout = Logger() # Markus: Output to console and to a log file
     utils.init_distributed_mode(args)
     print(args)
     device = torch.device(args.device)
