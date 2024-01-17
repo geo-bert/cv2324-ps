@@ -27,15 +27,18 @@ Was ich geändert habe am code, kannst du eh im Git log anschauen.
 * Die standard Learning Rate war beim Finetuning mega schlecht ~10%.
 
 # TODO: wiederholen von data augmentation runs
-* Gar keine Transforms (nur ToTensor())
-* Normalisieren mit imagenet mean/std
-* Normalisieren mit cifar mean/std
-* Alle CLI optionen ausschalten mit imagenet mean/std
+* Was ist der Testing Transform? (Centercrop or not) -> `--input_size 32 und --crop_pct 1` dann accuracy goes stonks
+* Gar keine Transforms (nur ToTensor()) -> in Dataloader transform mit `transforms.ToTensor()` ersetzen
+* Normalisieren mit imagenet mean/std -> in create_transform `return transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean,std)])` statt transform
+* Normalisieren mit cifar mean/std -> in create_transform `mean = (0.49139968, 0.48215827, 0.44653124), std = (0.24703233, 0.24348505, 0.26158768)` [reference](https://stackoverflow.com/questions/66678052/how-to-calculate-the-mean-and-the-std-of-cifar10-data)
+* Normalize + Bilder groß machen
+* Alle CLI optionen ausschalten mit imagenet mean/std 
 * Alle CLI optionen ausschalten mit cifar mean/std
 * Einzelne CLI optionen manuell hinzufügen
 * Das beste von den oberen mit den params aus dem paper probieren
 
 # TODO: mit den parametern aus dem paper trainieren
+* Wie genau funktioniert der Finetune Parameter
 * Beide Arten von Finetuning
 * Die andere Art von From Scratch (aber nur Epochen)
 * Andere Modelle für das Finetuning ausprobieren
@@ -47,3 +50,6 @@ Was ich geändert habe am code, kannst du eh im Git log anschauen.
 * Sachen soweit es geht aus paper reverten
 * Schauen, ob man ein originales ConvNet hernehmen kann
 * Bester Revert mit bester Data Augmentation und Hyperparametern kombinieren
+
+# TODO Marcel: 
+* Wie sehen Bilder nach transform (default und CLI optionen ausschalten) aus?
