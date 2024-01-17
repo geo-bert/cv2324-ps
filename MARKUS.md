@@ -31,18 +31,20 @@ Was ich geändert habe am code, kannst du eh im Git log anschauen.
 * Gar keine Transforms (nur ToTensor()) -> in Dataloader transform mit `transforms.ToTensor()` ersetzen
 * Normalisieren mit imagenet mean/std -> in create_transform `return transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean,std)])` statt transform
 * Normalisieren mit cifar mean/std -> in create_transform `mean = (0.49139968, 0.48215827, 0.44653124), std = (0.24703233, 0.24348505, 0.26158768)` [reference](https://stackoverflow.com/questions/66678052/how-to-calculate-the-mean-and-the-std-of-cifar10-data)
-* Normalize + Bilder groß machen
+* Normalize + Bilder groß machen -> im compose noch `(args.input_size, args.input_size), interpolation=transforms.InterpolationMode.BICUBIC`
+* Gleiche mit cifar normalize -> fertig
 * Alle CLI optionen ausschalten mit imagenet mean/std 
-* Alle CLI optionen ausschalten mit cifar mean/std
+* Alle CLI optionen ausschalten mit cifar mean/std -> fertig
 * Einzelne CLI optionen manuell hinzufügen
 * Das beste von den oberen mit den params aus dem paper probieren
 
 # TODO: mit den parametern aus dem paper trainieren
 * Wie genau funktioniert der Finetune Parameter
 * Beide Arten von Finetuning
-* Die andere Art von From Scratch (aber nur Epochen)
+* Die andere Art von From Scratch (aber nur 100 Epochen)
 * Andere Modelle für das Finetuning ausprobieren
-* Batchsize bei Finetuning durchprobieren (16, 32, 64, 100)
+* Batchsize bei Finetuning durchprobieren (16, 32, 64, 100) -> fertig
+* Ohne CLI Augmentation finetunen -> fertig
 * Mit dem --model Parameter herumspielen
 * Die beste Konfiguration auf das ganze CIFAR10 finetunen
 
