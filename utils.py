@@ -18,7 +18,8 @@ from pathlib import Path
 
 import torch
 import torch.distributed as dist
-from torch._six import inf
+# from torch._six import inf # was not be able to get resolved on my side
+from torch import inf
 
 from tensorboardX import SummaryWriter
 
