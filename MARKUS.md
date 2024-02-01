@@ -36,7 +36,7 @@ Was ich geändert habe am code, kannst du eh im Git log anschauen.
 - [ ] Alle CLI optionen ausschalten mit imagenet mean/std 
 - [x] Alle CLI optionen ausschalten mit cifar mean/std -> fertig
 - [ ] Einzelne CLI optionen manuell hinzufügen
-- [ ] Das beste von den oberen mit den params aus dem paper probieren
+- [x] Das beste von den oberen mit den params aus dem paper probieren
 
 # TODO: mit den parametern aus dem paper trainieren
 - [ ] Wie genau funktioniert der Finetune Parameter
