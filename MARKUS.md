@@ -50,6 +50,8 @@ Was ich geändert habe am code, kannst du eh im Git log anschauen.
 
 # TODO: Sachen aus dem paper reverten
 - [ ] Sachen soweit es geht aus paper reverten
+- [x] ReLU statt GELU
+- [x] BN statt LN -> hab die permutation unter normalisierung geschoben und inplace BatchNorm2d verwendet, statt LayerNorm
 - [ ] Schauen, ob man ein originales ConvNet hernehmen kann
 - [ ] Bester Revert mit bester Data Augmentation und Hyperparametern kombinieren
 
