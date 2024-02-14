@@ -1,3 +1,6 @@
+# Report
+Für den python code musst du die .sty datei in https://ctan.org/tex-archive/macros/latex/contrib/pythonhighlight?lang=en in den report-latex folder geben
+
 # Aufsetzen
 
 mit `pip install -r requirements.txt` die requirements installieren
@@ -24,34 +27,36 @@ und Training time 0:23:41
 Was ich geändert habe am code, kannst du eh im Git log anschauen.
 
 # Observationen (für den report dann)
-* Die standard Learning Rate war beim Finetuning mega schlecht ~10%.
+- Die standard Learning Rate war beim Finetuning mega schlecht ~10%.
 
 # TODO: wiederholen von data augmentation runs
-* Was ist der Testing Transform? (Centercrop or not) -> `--input_size 32 und --crop_pct 1` dann accuracy goes stonks
-* Gar keine Transforms (nur ToTensor()) -> in Dataloader transform mit `transforms.ToTensor()` ersetzen
-* Normalisieren mit imagenet mean/std -> in create_transform `return transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean,std)])` statt transform
-* Normalisieren mit cifar mean/std -> in create_transform `mean = (0.49139968, 0.48215827, 0.44653124), std = (0.24703233, 0.24348505, 0.26158768)` [reference](https://stackoverflow.com/questions/66678052/how-to-calculate-the-mean-and-the-std-of-cifar10-data)
-* Normalize + Bilder groß machen -> im compose noch `(args.input_size, args.input_size), interpolation=transforms.InterpolationMode.BICUBIC`
-* Gleiche mit cifar normalize -> fertig
-* Alle CLI optionen ausschalten mit imagenet mean/std 
-* Alle CLI optionen ausschalten mit cifar mean/std -> fertig
-* Einzelne CLI optionen manuell hinzufügen
-* Das beste von den oberen mit den params aus dem paper probieren
+- [x] Was ist der Testing Transform? (Centercrop or not) -> `--input_size 32 und --crop_pct 1` dann accuracy goes stonks
+- [x] Gar keine Transforms (nur ToTensor()) -> in Dataloader transform mit `transforms.ToTensor()` ersetzen
+- [x] Normalisieren mit imagenet mean/std -> in create_transform `return transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean,std)])` statt transform
+- [x] Normalisieren mit cifar mean/std -> in create_transform `mean = (0.49139968, 0.48215827, 0.44653124), std = (0.24703233, 0.24348505, 0.26158768)` [reference](https://stackoverflow.com/questions/66678052/how-to-calculate-the-mean-and-the-std-of-cifar10-data)
+- [x] Normalize + Bilder groß machen -> im compose noch `(args.input_size, args.input_size), interpolation=transforms.InterpolationMode.BICUBIC`
+- [x] Gleiche mit cifar normalize -> fertig
+- [ ] Alle CLI optionen ausschalten mit imagenet mean/std 
+- [x] Alle CLI optionen ausschalten mit cifar mean/std -> fertig
+- [ ] Einzelne CLI optionen manuell hinzufügen
+- [x] Das beste von den oberen mit den params aus dem paper probieren
 
 # TODO: mit den parametern aus dem paper trainieren
-* Wie genau funktioniert der Finetune Parameter
-* Beide Arten von Finetuning
-* Die andere Art von From Scratch (aber nur 100 Epochen)
-* Andere Modelle für das Finetuning ausprobieren
-* Batchsize bei Finetuning durchprobieren (16, 32, 64, 100) -> fertig
-* Ohne CLI Augmentation finetunen -> fertig
-* Mit dem --model Parameter herumspielen
-* Die beste Konfiguration auf das ganze CIFAR10 finetunen
+- [ ] Wie genau funktioniert der Finetune Parameter
+- [ ] Beide Arten von Finetuning
+- [ ] Die andere Art von From Scratch (aber nur 100 Epochen)
+- [ ] Andere Modelle für das Finetuning ausprobieren
+- [x] Batchsize bei Finetuning durchprobieren (16, 32, 64, 100) -> fertig
+- [x] Ohne CLI Augmentation finetunen -> fertig
+- [ ] Mit dem --model Parameter herumspielen
+- [ ] Die beste Konfiguration auf das ganze CIFAR10 finetunen -> läuft
 
 # TODO: Sachen aus dem paper reverten
-* Sachen soweit es geht aus paper reverten
-* Schauen, ob man ein originales ConvNet hernehmen kann
-* Bester Revert mit bester Data Augmentation und Hyperparametern kombinieren
+- [ ] Sachen soweit es geht aus paper reverten
+- [x] ReLU statt GELU
+- [x] BN statt LN -> hab die permutation unter normalisierung geschoben und inplace BatchNorm2d verwendet, statt LayerNorm
+- [ ] Schauen, ob man ein originales ConvNet hernehmen kann
+- [ ] Bester Revert mit bester Data Augmentation und Hyperparametern kombinieren
 
 # TODO Marcel: 
-* Wie sehen Bilder nach transform (default und CLI optionen ausschalten) aus?
+- [ ] Wie sehen Bilder nach transform (default und CLI optionen ausschalten) aus?
