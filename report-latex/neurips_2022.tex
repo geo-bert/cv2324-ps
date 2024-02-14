@@ -88,7 +88,28 @@
     For our work with the ConvNeXt architecture we investigated three main ideas.
     The first and most thorough was the effect of data augmentation on the network performance.
     The second was to experiment with the finetuning provided by the given implementation.
-    Finally, the third focus was to revert some of the changes \Citeauthor{liu2022convnet} made to the ResNet they built upon.
+    Finally, the third focus was to revert some of the changes~\Citeauthor{liu2022convnet} made to the ResNet they built upon.
+
+    As it is always a difficult choice to pick the hyperparameters, in our experiments we just used two different configurations that henceforth will be called \texttt{paper} and \texttt{example}, respectively.
+    The first set was taken from the second column in Table 5 of the ConvNeXt\cite{liu2022convnet} paper and the second were taken from the example Colab project presented on the networks GitHub page\cite{ayush0finetune}.
+    \autoref{tab:hyperparameters} shows all hyperparameters that are not set to the default values.
+    What additionally differs from the setup in the paper is the dataset used.
+    Instead of Imagenet1k all our training runs are based on the CIFAR10\cite{krizhevsky2009learning} dataset reduced to 10\% of its original size.
+    \begin{table}[h]
+        \caption{Choice of hyperparameters.}
+        \begin{center}
+            \begin{tabular}{lll}
+                \hline
+                Parameter     & \texttt{paper} & \texttt{example} \\ \hline
+                learning rate & 4e-3           & 4e-4             \\
+                warmup epochs & 5              & 0                \\
+                cutmix        & 1              & 0                \\
+                mixup         & 0.8            & 0                \\
+                EMA decay     & 1              & 0.9999
+            \end{tabular}
+        \end{center}
+        \label{tab:hyperparameters}
+    \end{table}
 
     \subsection{Code Modification and Quality of Life}\label{subsec:code-modification}
     To allow for an improved workflow for testing we chose to make some minor changes to the given codebase.
@@ -101,13 +122,13 @@
     Additionally, for transparency, the original codebase used CIFAR100, but we chose to change it to CIFAR10.
     \begin{figure}[h]
         \begin{python}
-dataset = datasets.CIFAR10(args.data_path, train=is_train,
-                                transform=transform, download=True)
-sample = list(range(0, len(dataset), args.downsample))
-dataset = torch.utils.data.Subset(dataset, sample)
-nb_classes = 10
+            dataset = datasets.CIFAR10(args.data_path, train=is_train,
+            transform=transform, download=True)
+            sample = list(range(0, len(dataset), args.downsample))
+            dataset = torch.utils.data.Subset(dataset, sample)
+            nb_classes = 10
         \end{python}
-        \caption{Downsampling the dataset}
+        \caption{Downsampling the dataset.}
         \label{fig:downsampling}
 
 
