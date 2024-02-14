@@ -1,3 +1,6 @@
+# Report
+Für den python code musst du die .sty datei in https://ctan.org/tex-archive/macros/latex/contrib/pythonhighlight?lang=en in den report-latex folder geben
+
 # Aufsetzen
 
 mit `pip install -r requirements.txt` die requirements installieren

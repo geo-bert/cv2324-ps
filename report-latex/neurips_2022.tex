@@ -35,6 +35,7 @@
 
 \usepackage{biblatex}
 \addbibresource{neurips_2022.bib}
+\usepackage{pythonhighlight}
 
 \title{Computer Vision Proseminar Report WS2023}
 
@@ -80,11 +81,42 @@
 
 
     \section{ConvNeXt}\label{sec:convnext}
-    ConvNeXt \cite{liu2022convnet}.
+    ConvNeXt\cite{liu2022convnet}.
+
 
     \section{Documentation}\label{sec:documentation}
+    For our work with the ConvNeXt architecture we investigated three main ideas.
+    The first and most thorough was the effect of data augmentation on the network performance.
+    The second was to experiment with the finetuning provided by the given implementation.
+    Finally, the third focus was to revert some of the changes \Citeauthor{liu2022convnet} made to the ResNet they built upon.
 
-    \subsection{Code Modification}\label{subsec:code-modification}
+    \subsection{Code Modification and Quality of Life}\label{subsec:code-modification}
+    To allow for an improved workflow for testing we chose to make some minor changes to the given codebase.
+    This was done to not only ensure faster training times, but also for a more lenient experience when having to set up the environment.
+
+    The first and only change that meddles with the actual implementation was to add another command line argument to allow for downsampling CIFAR10.
+    For this we registered a \texttt{--downsample} argument to the used argparser that is then used in the \verb|build_dataset| function in the \texttt{dataset.py} file.
+    The implementation for the usage can be seen in~\ref{fig:downsampling}.
+    Instead of choosing a random subset we choose every $n$th element, where $n$ is the downsampling factor.
+    Additionally, for transparency, the original codebase used CIFAR100, but we chose to change it to CIFAR10.
+    \begin{figure}[h]
+        \begin{python}
+dataset = datasets.CIFAR10(args.data_path, train=is_train,
+                                transform=transform, download=True)
+sample = list(range(0, len(dataset), args.downsample))
+dataset = torch.utils.data.Subset(dataset, sample)
+nb_classes = 10
+        \end{python}
+        \caption{Downsampling the dataset}
+        \label{fig:downsampling}
+
+
+    \end{figure}
+
+    The second and final change was to create a \texttt{requirements.txt} file for easy installation of the necessary packages.
+    Due to the codebase being incompatible with versions of pytorch larger than 2.0 and Google Colab defaulting to such a version we created this file to easily install all necessary dependencies with a single command.
+    This comes especially in handy because Colab resets the runtime after just a few hours of inactivity, in turn also resetting the changes in installed packages.
+    It eludes us as to why there was no such file already included in the codebase, just a very bare-bones markdown file with requirements.
 
     \subsection{Data Augmentation}\label{subsec:data-augmentation}
 
@@ -93,7 +125,8 @@
     \subsection{Network Reversion}\label{subsec:network-reversion}
 
 
-    \section*{References}
+    \section{Conclusion}\label{sec:conclusion}
+
     \printbibliography
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \section*{Checklist}
