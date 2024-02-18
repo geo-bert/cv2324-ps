@@ -36,27 +36,38 @@ Was ich geändert habe am code, kannst du eh im Git log anschauen.
 - [x] Normalisieren mit cifar mean/std -> in create_transform `mean = (0.49139968, 0.48215827, 0.44653124), std = (0.24703233, 0.24348505, 0.26158768)` [reference](https://stackoverflow.com/questions/66678052/how-to-calculate-the-mean-and-the-std-of-cifar10-data)
 - [x] Normalize + Bilder groß machen -> im compose noch `(args.input_size, args.input_size), interpolation=transforms.InterpolationMode.BICUBIC`
 - [x] Gleiche mit cifar normalize -> fertig
-- [ ] Alle CLI optionen ausschalten mit imagenet mean/std 
 - [x] Alle CLI optionen ausschalten mit cifar mean/std -> fertig
-- [ ] Einzelne CLI optionen manuell hinzufügen
 - [x] Das beste von den oberen mit den params aus dem paper probieren
 
 # TODO: mit den parametern aus dem paper trainieren
 - [ ] Wie genau funktioniert der Finetune Parameter
-- [ ] Beide Arten von Finetuning
-- [ ] Die andere Art von From Scratch (aber nur 100 Epochen)
-- [ ] Andere Modelle für das Finetuning ausprobieren
 - [x] Batchsize bei Finetuning durchprobieren (16, 32, 64, 100) -> fertig
 - [x] Ohne CLI Augmentation finetunen -> fertig
-- [ ] Mit dem --model Parameter herumspielen
-- [ ] Die beste Konfiguration auf das ganze CIFAR10 finetunen -> läuft
+- [x] Die beste Konfiguration auf das ganze CIFAR10 finetunen -> fertig
 
 # TODO: Sachen aus dem paper reverten
 - [ ] Sachen soweit es geht aus paper reverten
 - [x] ReLU statt GELU
 - [x] BN statt LN -> hab die permutation unter normalisierung geschoben und inplace BatchNorm2d verwendet, statt LayerNorm
-- [ ] Schauen, ob man ein originales ConvNet hernehmen kann
-- [ ] Bester Revert mit bester Data Augmentation und Hyperparametern kombinieren
 
-# TODO Marcel: 
-- [ ] Wie sehen Bilder nach transform (default und CLI optionen ausschalten) aus?
+# TODO: Bilder Transforms anschauen 
+- [x] Wie sehen Bilder nach transform (default und CLI optionen ausschalten) aus?
+- [x] Input Size Parameter anschauen -> am ende der forward features wird ein global average pooling gemacht, d.h. input size funktioniert wie es soll d.h. es kommen bilder mit der größe 32 ins netzwerk.
+
+Shapes der Blöcke mit size 32
+```
+torch.Size([64, 96, 8, 8])
+torch.Size([64, 192, 4, 4])
+torch.Size([64, 384, 2, 2])
+torch.Size([64, 768, 1, 1])
+```
+
+Ohne Size
+```
+torch.Size([64, 96, 56, 56])
+torch.Size([64, 192, 28, 28])
+torch.Size([64, 384, 14, 14])
+torch.Size([64, 768, 7, 7])
+```
+
+Am ende kommt immer das raus: `torch.Size([64, 768])`
