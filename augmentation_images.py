@@ -27,7 +27,12 @@ for filename in sorted(glob.glob('image_comp/reduced*.png')):
     im=Image.open(filename)
     reduced.append(im)
 
-images = np.concatenate((none, full, reduced))
+noaa = []
+for filename in sorted(glob.glob('image_comp/noaa*.png')):
+    im=Image.open(filename)
+    noaa.append(im)
+
+images = np.concatenate((none, full, reduced, noaa))
 images = np.array(list(map(transforms.ToTensor(), images)))
 images = torch.from_numpy(images)
 grid = torchvision.utils.make_grid(images, nrow=5, normalize=True)

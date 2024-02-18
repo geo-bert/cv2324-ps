@@ -38,6 +38,18 @@ Was ich geändert habe am code, kannst du eh im Git log anschauen.
 - [x] Gleiche mit cifar normalize -> fertig
 - [x] Alle CLI optionen ausschalten mit cifar mean/std -> fertig
 - [x] Das beste von den oberen mit den params aus dem paper probieren
+- [x] Ohne autoaugment cifar -> läuft muss dann noch das augmentation bild updaten
+
+Muss die Tests rerunnen, keine ahnung welche datei was ist und wo cifar verwendet wurde (wenn nicht angegeben immer example parameter und cifar)
+- [x] From Scratch mit Paper Parameters und Imagenet mean/std -> from-scratch-example-parameters_imagenet.txt
+- [x] From Scratch mit Example Parameters und Imagenet mean/std -> from-scratch-example-parameters_imagenet.txt
+- [x] From Scratch -> from-scratch.txt
+- [x] Nur ToTensor() -> only-to-tensor.txt
+- [x] Nur ToTensor() aber mit --input_size 32 -> only-totensor_input-is-32
+- [x] Normalize mit input size -> normalize_input-is-32.txt
+- [x] Auch Resizen -> resize.txt
+- [x] CLI optionen auschalten außer AA -> cli-augment-off-but-autoaugment.txt
+- [x] CLI optionen ausschalten mit AA
 
 # TODO: mit den parametern aus dem paper trainieren
 - [ ] Wie genau funktioniert der Finetune Parameter
@@ -71,3 +83,24 @@ torch.Size([64, 768, 7, 7])
 ```
 
 Am ende kommt immer das raus: `torch.Size([64, 768])`
+
+Transforms wenn alles ausgeschalten ist:
+````
+RandomResizedCropAndInterpolation(size=(224, 224), scale=(0.08, 1.0), ratio=(0.75, 1.3333), interpolation=PIL.Image.BICUBIC)
+RandomHorizontalFlip(p=0.5)
+<timm.data.auto_augment.AutoAugment object at 0x7fb517c066e0>
+ToTensor()
+Normalize(mean=tensor([0.4914, 0.4822, 0.4465]), std=tensor([0.2470, 0.2435, 0.2616]))
+````
+
+Transforms wenn alles an ist:
+````
+RandomResizedCropAndInterpolation(size=(224, 224), scale=(0.08, 1.0), ratio=(0.75, 1.3333), interpolation=PIL.Image.BICUBIC)
+RandomHorizontalFlip(p=0.5)
+<timm.data.auto_augment.RandAugment object at 0x7f5385f2e3b0>
+ToTensor()
+Normalize(mean=tensor([0.4914, 0.4822, 0.4465]), std=tensor([0.2470, 0.2435, 0.2616]))
+<timm.data.random_erasing.RandomErasing object at 0x7f5385f2de70>
+````
+
+Iwie fehlt da color jitter. Im timms wenn autoaugment an ist dann ist automatisch color jitter aus lol.
