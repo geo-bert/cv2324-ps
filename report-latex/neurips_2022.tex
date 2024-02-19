@@ -36,6 +36,7 @@
 \usepackage{biblatex}
 \addbibresource{neurips_2022.bib}
 \usepackage{pythonhighlight}
+\usepackage{graphicx}
 
 \title{Computer Vision Proseminar Report WS2023}
 
@@ -93,6 +94,7 @@
     As it is always a difficult choice to pick the hyperparameters, in our experiments we just used two different configurations that henceforth will be called \texttt{paper} and \texttt{example}, respectively.
     The first set was taken from the second column in Table 5 of the ConvNeXt\cite{liu2022convnet} paper and the second were taken from the example Colab project presented on the networks GitHub page\cite{ayush0finetune}.
     \autoref{tab:hyperparameters} shows all hyperparameters that are not set to the default values.
+    We also always chose the tiny ConvNeXt model.
     What additionally differs from the setup in the paper is the dataset used.
     Instead of Imagenet1k all our training runs are based on the CIFAR10\cite{krizhevsky2009learning} dataset reduced to 10\% of its original size.
     \begin{table}[h]
@@ -130,8 +132,6 @@
         \end{python}
         \caption{Downsampling the dataset.}
         \label{fig:downsampling}
-
-
     \end{figure}
 
     The second and final change was to create a \texttt{requirements.txt} file for easy installation of the necessary packages.
@@ -140,6 +140,66 @@
     It eludes us as to why there was no such file already included in the codebase, just a very bare-bones markdown file with requirements.
 
     \subsection{Data Augmentation}\label{subsec:data-augmentation}
+    The subsampling helped massively in decreasing the training time, but still just taking 10\% of the dataset for training took three hours to train for 100 epochs on our machines and in Google Colab.
+    We identified that the largest time during training was spent applying transforms to the images.
+    Therefore, a large focus working with this network architecture was on trying to find a sweet spot between transforms and model accuracy.
+
+    Before being able to evaluate the performance of different configurations of image transforms, we need some kind of baseline.
+    Hence, we first trained the ConvNeXt network as is first with the paper parameters (\texttt{example\_imagenet}) and example parameters (\texttt{example\_imagenet}).
+    As the example parameters give significantly better results, all future tests will use their hyperparameter configuration.
+    Additionally, we chose to change the mean and standard deviation used for the normalization transform to the ones from CIFAR10 instead of Imagenet1k (\texttt{from-scratch}).
+    The values were not calculated by us, but taken from a StackOverflow\cite{stackoverflow} comment.
+    The resulting accuracy is lower than that when using the initial values, but we prefer proper values over a few more percent accuracy.
+    The testing accuracy curves of the different configurations can be seen in \autoref{fig:data-augmentation}.
+
+    With a baseline of about 65\% accuracy established we can now start to experiment with the image transforms.
+    We did this by removing it entirely and reintroducing it in steps with minimal changes in the codebase.
+    One was always necessary, that being the \texttt{ToTensor()} transform as otherwise the training would not even work.
+    The result was very fast, taking about only five minutes, but had abysmal performance (\texttt{only-totensor}).
+    This was very suspicious, and we came to find that the testing procedure used different transforms that include a resize.
+    Therefore, we trained the network on 32 by 32 images and tested it on 224 by 224 images.
+    Using the \texttt{input\_size} command line argument we can change this behaviour to also testing on the proper image size.
+    Still, the accuracy (\texttt{only-totensor\_input-is-32}) is very bad.
+
+    Something that rubbed us the wrong way during the tests before resizing was that the network seemed to don't mind whether the images were 32 by 32 or 224 by 224.
+    The linear layer in the implementation has a fixed value for its input dimensions and the images are indeed their specified size when entering the network.
+    After a bit of digging we found the reason why it did not matter.
+    After the convolution layers the shape of the data is still different between different image sizes, however, the number of channels is the same.
+    In a final step before the classification global average pooling is applied that results in the output shape just being batch size and number of channels.
+
+    Next, we introduced normalization which only minimally impacted training time, but increased the performance by another 10\% (\texttt{normalize\_input-is-32}).
+    This was still too bad for us to consider as a worth tradeoff, hence we introduced the resizing back to 224 by 224 pixel images (\texttt{resize}).
+    The resizing pushed our training time back into more than one hour but achieved performance comparable to the paper parameters.
+    However, this was still not satisfactory performance wise, and therefore we moved on to playing with the command line arguments for the transforms, as introducing other transforms would modify the codebase too much.
+    The relevant options one can disable via passing arguments to the model is color jitter, auto augmentation and random erasure.
+    Other modifications like horizontal flipping and random cropping cannot be disabled without tampering with the code.
+    Because the documentation of the arguments was so poor in our next test we only managed to disable color jitter, which we found out is always disabled as long as any auto augmentation was done, and random erasure.
+    We only managed to change the default Random Augment to Auto Augment using the Auto Augment flag.
+    To our surprise, this configuration (\texttt{cli-augment-off-but-aa}) gave better results than the example parameters whilst also needing half an hour less to train.
+    The final configuration we tested was to properly disable the auto augmentation as well (\texttt{cli-augment-off}).
+    The results were also better than the example parameters, but slightly worse than the prior configuration while having no change in training time.
+
+    The conclusion of these experiments was that we can improve the performance of training from scratch by varying the command line arguments but not the training time.
+    Hence, in the coming chapters we will use it in tandem with the example parameter configuration for testing when wanting to squeeze out a bit more performance.
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.9\textwidth]{images/data_augmentation}
+        \caption{Comparison of different data augmentation configurations.}
+        \label{fig:data-augmentation}
+    \end{figure}
+
+    After experimenting with the augmentation, we wanted to see how the images looked after being transformed.
+    \autoref{fig:image-transforms} shows the different transform configurations being applied to a selection of images.
+    The first row are the original images resized to 224 by 224 with bicubic interpolation.
+    The next row depicts the transforms being applied when not changing anything in the command line parameters.
+    Thirdly, are the images generated when disabling all command line arguments but the auto augmentation.
+    In the final row all transforms able to be disabled in the command line are displayed.
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\textwidth]{images/image_transforms}
+        \caption{Impact of image transforms on dataset.}
+        \label{fig:image-transforms}
+    \end{figure}
 
     \subsection{Finetuning}\label{subsec:finetuning}
 

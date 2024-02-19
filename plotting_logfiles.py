@@ -17,7 +17,7 @@ for color, filename in zip(plt.color_sequences["tab10"], sys.argv[3:]):
         contents = list(map(lambda x: json.loads(x), logfile.readlines()))
         accuracies = list(map(lambda x: x["test_acc1"], contents))
         epochs = list(map(lambda x: x["epoch"], contents))
-        label = filename[len("model_logs/log_"):-len(".txt")]
+        label = filename[len("model_logs/data_augmentation/log_"):-len(".txt")]
         last_acc = accuracies[-1]
         line, = ax.plot(epochs, accuracies, color=color)
         length = len(accuracies)
@@ -38,5 +38,5 @@ ax.set_xlim([-0.05*(NR_EPOCHS-1), (NR_EPOCHS-1)*1.05])
 ax.set_ylabel("Accuracy [%]")
 ax.set_xlabel("Epoch")
 plt.tight_layout(pad=3)
-plt.title(FILENAME.replace("_", " ")[:-4].title(), pad=15 + 15 * np.ceil(len(lines) / 2))
+plt.title(FILENAME.split("/")[-1].replace("_", " ")[:-4].title(), pad=15 + 15 * np.ceil(len(lines) / 2))
 plt.savefig(FILENAME, dpi=300)

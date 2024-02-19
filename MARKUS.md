@@ -57,7 +57,7 @@ Muss die Tests rerunnen, keine ahnung welche datei was ist und wo cifar verwende
 - [x] Ohne CLI Augmentation finetunen -> fertig
 - [x] Die beste Konfiguration auf das ganze CIFAR10 finetunen -> fertig
 
-# TODO: Sachen aus dem paper reverten
+# TODO: Sachen aus dem paper reverten (mit den besten parametern gemacht)
 - [ ] Sachen soweit es geht aus paper reverten
 - [x] ReLU statt GELU
 - [x] BN statt LN -> hab die permutation unter normalisierung geschoben und inplace BatchNorm2d verwendet, statt LayerNorm
