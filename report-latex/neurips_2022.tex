@@ -117,18 +117,18 @@
     To allow for an improved workflow for testing we chose to make some minor changes to the given codebase.
     This was done to not only ensure faster training times, but also for a more lenient experience when having to set up the environment.
 
-    The first and only change that meddles with the actual implementation was to add another command line argument to allow for downsampling CIFAR10.
+    The first and only change that meddles with the actual implementation was to add another command line argument to allow for down-sampling CIFAR10.
     For this we registered a \texttt{--downsample} argument to the used argparser that is then used in the \verb|build_dataset| function in the \texttt{dataset.py} file.
     The implementation for the usage can be seen in~\ref{fig:downsampling}.
-    Instead of choosing a random subset we choose every $n$th element, where $n$ is the downsampling factor.
+    Instead of choosing a random subset we choose every $n$th element, where $n$ is the down-sampling factor.
     Additionally, for transparency, the original codebase used CIFAR100, but we chose to change it to CIFAR10.
     \begin{figure}[h]
         \begin{python}
-            dataset = datasets.CIFAR10(args.data_path, train=is_train,
-            transform=transform, download=True)
-            sample = list(range(0, len(dataset), args.downsample))
-            dataset = torch.utils.data.Subset(dataset, sample)
-            nb_classes = 10
+dataset = datasets.CIFAR10(args.data_path, train=is_train,
+                            transform=transform, download=True)
+sample = list(range(0, len(dataset), args.downsample))
+dataset = torch.utils.data.Subset(dataset, sample)
+nb_classes = 10
         \end{python}
         \caption{Downsampling the dataset.}
         \label{fig:downsampling}
@@ -202,11 +202,58 @@
     \end{figure}
 
     \subsection{Finetuning}\label{subsec:finetuning}
+    During our trials for improved training time we also experimented with the finetuning in the network.
+    It was astounding that just using the command in~\cite{ayush0finetune} we managed to achieve an accuracy of 95\% (\texttt{finetune}) even though for training from scratch we capped at 70\%.
+    Therefore, our goal was to try and squeeze out as much performance as possible.
+    The results for our finetuning can be seen in \autoref{fig:finetuning} and the configurations will be explained in the next paragraphs.
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.9\textwidth]{images/finetuning}
+        \caption{Comparison of finetuning configurations.}
+        \label{fig:finetuning}
+    \end{figure}
+
+    For our finetuning instead of training for 100 epochs, we only trained for 10, except in one case.
+    We always chose the example parameters and fine-tuned the pretrained ConvNeXt-T for ImageNet-1K model\cite{repository}.
+    Finetuning can be initiated by specifying a reference to a pretrained model, in our case a link, as a command line parameter with the \texttt{--finetune} option.
+
+    We did three different sets of tests when it came to finetuning in order to squeeze out performance.
+    None of these included varying any hyperparameter, other than our first test with different batch sizes.
+    On our local machine, the maximum amount of video memory was eight gigabytes.
+    As a result, locally, we were limited to a batch size of 64.
+    We tried out different powers of two, i.e.\ 16 (\texttt{finetune\_batch-size-16}), 32 (\texttt{finetune\_batch-size-32}), 64 (\texttt{finetune}), and 100 (\texttt{finetune\_batch-size-100}) which is the maximum Google Colab can do.
+    The results show that all of them give similar results, but the batch size of 64 comes out on top.
+
+    In our second test we specified once again the option that the input images are of size 32 by 32.
+    This gave us, with no contest, the worst finetuning performance.
+    In our data augmentation trials this option was also dead last, and we do not conjecture that in this case the poor performance comes from the pretrained weights having been obtained with different image dimensions.
+
+    As a final test we put all our knowledge obtained until now to try and create the best configuration possible.
+    That means we took the example parameters and turned off all command line toggleable data augmentation except for auto augmentation.
+    The results were only slightly better than our initial baseline (\texttt{finetune\_augment-off-but-aa}).
+    Thinking we can do even better, we tested our luck on the entire dataset.
+    This netted us a very formidable performance of 98\% (\texttt{best-finetune}).
+    But also took as long to train as a normal network for 100 epochs with only 10\% of the data.
+    Spurred on by this promising number we also tried and increased the number of epochs trained to 20, but the overall performance stayed about the same even though the training took twice as long (\texttt{best-finetune-20ep}).
+
+    Having obtained a satisfying enough performance and configuration, we turned our attention to understanding the underlying mechanism of finetuning in this implementation.
+    Differing from the way it was presented in the lecture, which froze all weights except for the last layer, all parameters are adjusted during the finetuning training.
+    What they do is create the model specified by the user, in our case the tiny version, load the state dictionary of the pretrained model and override all weights and biases in each layer that has the same shape.
+    Meaning, because we used the tiny pretrained model, the only weights and biases not loaded and kept uninitialized were that of the final classification layer.
+
 
     \subsection{Network Reversion}\label{subsec:network-reversion}
+    % vlt: kernel size und block layout /figure 3 und inverted bottleneck
+    % more activation functions
+    % more normalization layers
+    % nicht: resnextify, seperate downsampling layers
 
+    % erklären was man im code gemacht hat
+    % gelu -> relu: genau eine zeile geändert
+    % ln -> bn: layer norm mit bn in block ersetzt und im forward das permute erst nach der norm gemacht
 
     \section{Conclusion}\label{sec:conclusion}
+    % could have played around more with hyperparameters
 
     \printbibliography
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

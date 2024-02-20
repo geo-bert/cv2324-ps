@@ -17,13 +17,13 @@ for color, filename in zip(plt.color_sequences["tab10"], sys.argv[3:]):
         contents = list(map(lambda x: json.loads(x), logfile.readlines()))
         accuracies = list(map(lambda x: x["test_acc1"], contents))
         epochs = list(map(lambda x: x["epoch"], contents))
-        label = filename[len("model_logs/data_augmentation/log_"):-len(".txt")]
+        label = filename[len("model_logs/finetuning/log_"):-len(".txt")]
         last_acc = accuracies[-1]
         line, = ax.plot(epochs, accuracies, color=color)
         length = len(accuracies)
         supporting_line_range = np.arange(length - 1, np.ceil(NR_EPOCHS * 1.1))
         max_line, = ax.plot(supporting_line_range, np.repeat(last_acc, len(supporting_line_range)), linestyle=":")
-        ax.annotate(f"{last_acc:.2f}%", xy=(NR_EPOCHS-0.5, last_acc), color=color, xytext=(NR_EPOCHS*0.2, 0),
+        ax.annotate(f"{last_acc:.2f}%", xy=(NR_EPOCHS-0.5, last_acc), color=color, xytext=(NR_EPOCHS*0.5, 0),
                     textcoords="offset points", va="center", size=8, annotation_clip=False)
         lines.append((line, max_line))
         labels.append(label)
