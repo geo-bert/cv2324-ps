@@ -57,9 +57,12 @@ def build_transform(is_train, args):
     imagenet_default_mean_and_std = args.imagenet_default_mean_and_std
     mean = IMAGENET_INCEPTION_MEAN if not imagenet_default_mean_and_std else IMAGENET_DEFAULT_MEAN
     std = IMAGENET_INCEPTION_STD if not imagenet_default_mean_and_std else IMAGENET_DEFAULT_STD
+    # Markus CIFAR10 mean and std https://stackoverflow.com/questions/66678052/how-to-calculate-the-mean-and-the-std-of-cifar10-data
+    mean = (0.49139968, 0.48215827 ,0.44653124)
+    std = (0.24703233, 0.24348505, 0.26158768)
 
     if is_train:
-        # this should always dispatch to transforms_imagenet_train
+        #this should always dispatch to transforms_imagenet_train
         transform = create_transform(
             input_size=args.input_size,
             is_training=True,

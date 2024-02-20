@@ -243,6 +243,33 @@ nb_classes = 10
 
 
     \subsection{Network Reversion}\label{subsec:network-reversion}
+    The final focus of experimenting with this implementation was trying to revert individual changes made by the authors to the initial ResNet-50.
+    This endeavour requires us to abandon the idea of minimizing the changes to existing codebase, and we will define the precise changes made to the network architecture.
+    In the beginning, we focus on more simple and minor changes and then move on to more involved and coupled changes.
+    However, due to time limits and its complexity we were not able to revert all changes made.
+    Every modification was done individually and the changes do not aggregate.
+    As with the previous chapters, the results can be seen in \autoref{fig:reverts}.
+    The baseline is our best result from the data augmentation experiments and can be identified with \texttt{cli-augment-off-but-aa}.
+    All other reverts will use the same command line arguments to let the changes be the only varying factor.
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.9\textwidth]{images/reverts}
+        \caption{Comparison of different reversions.}
+        \label{fig:reverts}
+    \end{figure}
+
+    First up was reverting from the GELU activation function to ReLU\@.
+    This was a very quick and easy change, as there is only one line of code to change.
+    It is located in the class definition of \texttt{Block} in the \texttt{convnext.py} file.
+    All other changes are also done in the same file, so for brevity it will be omitted.
+    The resulting network performance is slightly lower than the baseline (\texttt{revert-relu}).
+
+    The next change was reverting from their custom implementation of layer normalization to batch normalization.
+    This was also not too difficult and we just exchanged the definition of the norm in the Block class with the PyTorch inbuilt BatchNorm.
+    Additionally, in the forward method the normalization and the first permutation swapped places.
+    The performance of the network significantly shot up to an impressive 76\% (\texttt{bn-replaces-ln}).
+
     % vlt: kernel size und block layout /figure 3 und inverted bottleneck
     % more activation functions
     % more normalization layers
