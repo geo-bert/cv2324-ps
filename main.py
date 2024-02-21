@@ -77,6 +77,24 @@ def get_args_parser():
         metavar="PCT",
         help="Drop path rate (default: 0.0)",
     )
+    parser.add_argument(
+        "--add_act_fcts",
+        type=str2bool,
+        default=False,
+        help="Drop path rate (default: Dalse)",
+    )
+    parser.add_argument(
+        "--add_norm_layers",
+        type=str2bool,
+        default=False,
+        help="Drop path rate (default: False)",
+    )
+    parser.add_argument(
+        "--inverted_bottleneck",
+        type=int,
+        default=4,
+        help="defines the size of the inverted bottleneck (default: 4.0)",
+    )
     parser.add_argument("--input_size", default=224, type=int, help="image input size")
     parser.add_argument(
         "--layer_scale_init_value",
@@ -387,7 +405,7 @@ def get_args_parser():
     parser.add_argument(
         "--visualize_filter",
         type=int,
-        default=1,
+        default=-1,
         help="Convolutional layer that should be visualized",
     )
     return parser
@@ -506,6 +524,9 @@ def main(args):
         drop_path_rate=args.drop_path,
         layer_scale_init_value=args.layer_scale_init_value,
         head_init_scale=args.head_init_scale,
+        add_norm_layers=args.add_norm_layers,
+        add_act_fcts=args.add_act_fcts,
+        inverted_bottleneck=args.inverted_bottleneck,
     )
 
     if args.finetune:
@@ -771,20 +792,66 @@ def main(args):
         wandb_logger.log_checkpoints()
 
     if args.visualize_filter > -1:
+        # load best model, code taken from args.finetune code
+        bestmodel = create_model(
+            args.model,
+            pretrained=False,
+            num_classes=args.nb_classes,
+            drop_path_rate=args.drop_path,
+            layer_scale_init_value=args.layer_scale_init_value,
+            head_init_scale=args.head_init_scale,
+            add_norm_layers=args.add_norm_layers,
+            add_act_fcts=args.add_act_fcts,
+            inverted_bottleneck=args.inverted_bottleneck,
+        )
+
+        checkpoint = torch.load(
+            os.path.join(args.output_dir, "checkpoint-best.pth"), map_location="cpu"
+        )
+
+        print("Load best ckpt from %s" % args.output_dir)
+        checkpoint_model = None
+        for model_key in args.model_key.split("|"):
+            if model_key in checkpoint:
+                checkpoint_model = checkpoint[model_key]
+                print("Load state_dict by model_key = %s" % model_key)
+                break
+        if checkpoint_model is None:
+            checkpoint_model = checkpoint
+        state_dict = bestmodel.state_dict()
+        for k in ["head.weight", "head.bias"]:
+            if (
+                k in checkpoint_model
+                and checkpoint_model[k].shape != state_dict[k].shape
+            ):
+                print(f"Removing key {k} from pretrained checkpoint")
+                del checkpoint_model[k]
+        utils.load_state_dict(bestmodel, checkpoint_model, prefix=args.model_prefix)
+        bestmodel.to(device)
+
+        # create filter image
         layer_idx = 0
         if isinstance(
-            model.downsample_layers[args.visualize_filter][layer_idx],
+            bestmodel.downsample_layers[args.visualize_filter][layer_idx],
             models.convnext.LayerNorm,
         ):
             layer_idx = 1
         grid = torchvision.utils.make_grid(
-            model.downsample_layers[args.visualize_filter][layer_idx].weight.data.cpu(),
+            bestmodel.downsample_layers[args.visualize_filter][
+                layer_idx
+            ].weight.data.cpu(),
             nrow=8,
             normalize=True,
             padding=1,
         )
         plt.figure(figsize=(5, 5))
         plt.imshow(grid.numpy().transpose((1, 2, 0)))
+        plt.savefig(
+            os.path.join(
+                args.output_dir, "filters_layer" + str(args.visualize_filter) + ".png"
+            )
+        )
+        # plt.show()
 
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
