@@ -66,225 +66,236 @@
 \begin{document}
 
 
-    \maketitle
+\maketitle
 
 
-    \begin{abstract}
-        The abstract paragraph should be indented \nicefrac{1}{2}~inch (3~picas) on both the left- and right-hand margins.
-        Use 10~point type, with a vertical spacing (leading) of 11~points.
-        The word \textbf{Abstract} must be centered, bold, and in point size 12.
-        Two line spaces precede the abstract.
-        The abstract must be limited to one paragraph.
-    \end{abstract}
+\begin{abstract}
+    The abstract paragraph should be indented \nicefrac{1}{2}~inch (3~picas) on both the left- and right-hand margins.
+    Use 10~point type, with a vertical spacing (leading) of 11~points.
+    The word \textbf{Abstract} must be centered, bold, and in point size 12.
+    Two line spaces precede the abstract.
+    The abstract must be limited to one paragraph.
+\end{abstract}
 
 
-    \section{Introduction}\label{sec:introduction}
+\section{Introduction}\label{sec:introduction}
+
+\section{ConvNeXt}\label{sec:convnext}
+% summarize the key aspects of the paper, 1 - 1.5p
+ConvNeXt\cite{liu2022convnet}.
+ConvNeXt is the label for a machine learning project of Liu, Mao et al., regarding image classification. It is supposed to show an alternative to the in machine learning science currently mainly focussed vision transformers. For this they start with a standard and modify it with techniques used or developed in vision transformers and optimize training and model parameters in respect to maximum accuracy.
+One of the most famous image classification models is the ResNet, using conventional convolution layers, reaching high scores in terms of accuracy and being base model for multiple other ConvNets. it comes in different variants, defined by the structural depth. For ConvNeXt both, the ResNet-50 with around 4.5e9 FLOPs and ResNet-200 having around 15e9 FLOPs are used and compared with different parameters. On the counterpart, looking at transformers, originally abandon any convolutions, ConvNext implements design principles of the Swin Transformer that combines the transformers technology and convolutions, to achieve higher accuracy and comparing it to the accuracy of the standard Swin Transformer. The derivatives used are Swin-T and Swin-B for ResNet-50 and ResNet-200 respectively. Besides that, ConvNeXt uses an adapted set of training parameters like an increased number of epochs, a special set of data augmentation and the AdamW optimizer.
+
+As we will discuss each of the reversions done for ConvNeXt later, we will now briefly go through the most important adaptions made in comparison to a standard ResNet.
+
+\section {Stage compute ratio}
+While ResNet-50 uses a shape of (3,4,6,3), Swin Transformers have a ratio of 1:1:9:1. In ConvNeXt, the shape is set to (3,3,9,3)
+patchify
+In opposite to traditional ConvNet designs, vision transformers do not use overlapping kernels in the convolution input layers, but instead non overlapping, usually larger kernels. ConvNeXt keeps small kernels but let not overlap them, reaching even slightly better results with this simplifying approach.
 
 
-    \section{ConvNeXt}\label{sec:convnext}
-    ConvNeXt\cite{liu2022convnet}.
 
 
-    \section{Documentation}\label{sec:documentation}
-    For our work with the ConvNeXt architecture we investigated three main ideas.
-    The first and most thorough was the effect of data augmentation on the network performance.
-    The second was to experiment with the finetuning provided by the given implementation.
-    Finally, the third focus was to revert some of the changes~\Citeauthor{liu2022convnet} made to the ResNet they built upon.
+\section{Documentation}\label{sec:documentation}
+For our work with the ConvNeXt architecture we investigated three main ideas.
+The first and most thorough was the effect of data augmentation on the network performance.
+The second was to experiment with the finetuning provided by the given implementation.
+Finally, the third focus was to revert some of the changes~\Citeauthor{liu2022convnet} made to the ResNet they built upon.
 
-    As it is always a difficult choice to pick the hyperparameters, in our experiments we just used two different configurations that henceforth will be called \texttt{paper} and \texttt{example}, respectively.
-    The first set was taken from the second column in Table 5 of the ConvNeXt\cite{liu2022convnet} paper and the second were taken from the example Colab project presented on the networks GitHub page\cite{ayush0finetune}.
-    \autoref{tab:hyperparameters} shows all hyperparameters that are not set to the default values.
-    We also always chose the tiny ConvNeXt model.
-    What additionally differs from the setup in the paper is the dataset used.
-    Instead of Imagenet1k all our training runs are based on the CIFAR10\cite{krizhevsky2009learning} dataset reduced to 10\% of its original size.
-    \begin{table}[h]
-        \caption{Choice of hyperparameters.}
-        \begin{center}
-            \begin{tabular}{lll}
-                \hline
-                Parameter     & \texttt{paper} & \texttt{example} \\ \hline
-                learning rate & 4e-3           & 4e-4             \\
-                warmup epochs & 5              & 0                \\
-                cutmix        & 1              & 0                \\
-                mixup         & 0.8            & 0                \\
-                EMA decay     & 1              & 0.9999
-            \end{tabular}
-        \end{center}
-        \label{tab:hyperparameters}
-    \end{table}
+As it is always a difficult choice to pick the hyperparameters, in our experiments we just used two different configurations that henceforth will be called \texttt{paper} and \texttt{example}, respectively.
+The first set was taken from the second column in Table 5 of the ConvNeXt\cite{liu2022convnet} paper and the second were taken from the example Colab project presented on the networks GitHub page\cite{ayush0finetune}.
+\autoref{tab:hyperparameters} shows all hyperparameters that are not set to the default values.
+We also always chose the tiny ConvNeXt model.
+What additionally differs from the setup in the paper is the dataset used.
+Instead of Imagenet1k all our training runs are based on the CIFAR10\cite{krizhevsky2009learning} dataset reduced to 10\% of its original size.
+\begin{table}[h]
+    \caption{Choice of hyperparameters.}
+    \begin{center}
+        \begin{tabular}{lll}
+            \hline
+            Parameter     & \texttt{paper} & \texttt{example} \\ \hline
+            learning rate & 4e-3           & 4e-4             \\
+            warmup epochs & 5              & 0                \\
+            cutmix        & 1              & 0                \\
+            mixup         & 0.8            & 0                \\
+            EMA decay     & 1              & 0.9999
+        \end{tabular}
+    \end{center}
+    \label{tab:hyperparameters}
+\end{table}
 
-    \subsection{Code Modification and Quality of Life}\label{subsec:code-modification}
-    To allow for an improved workflow for testing we chose to make some minor changes to the given codebase.
-    This was done to not only ensure faster training times, but also for a more lenient experience when having to set up the environment.
+\subsection{Code Modification and Quality of Life}\label{subsec:code-modification}
+To allow for an improved workflow for testing we chose to make some minor changes to the given codebase.
+This was done to not only ensure faster training times, but also for a more lenient experience when having to set up the environment.
 
-    The first and only change that meddles with the actual implementation was to add another command line argument to allow for down-sampling CIFAR10.
-    For this we registered a \texttt{--downsample} argument to the used argparser that is then used in the \verb|build_dataset| function in the \texttt{dataset.py} file.
-    The implementation for the usage can be seen in~\ref{fig:downsampling}.
-    Instead of choosing a random subset we choose every $n$th element, where $n$ is the down-sampling factor.
-    Additionally, for transparency, the original codebase used CIFAR100, but we chose to change it to CIFAR10.
-    \begin{figure}[h]
-        \begin{python}
-dataset = datasets.CIFAR10(args.data_path, train=is_train,
-                            transform=transform, download=True)
-sample = list(range(0, len(dataset), args.downsample))
-dataset = torch.utils.data.Subset(dataset, sample)
-nb_classes = 10
-        \end{python}
-        \caption{Downsampling the dataset.}
-        \label{fig:downsampling}
-    \end{figure}
+The first and only change that meddles with the actual implementation was to add another command line argument to allow for down-sampling CIFAR10.
+For this we registered a \texttt{--downsample} argument to the used argparser that is then used in the \verb|build_dataset| function in the \texttt{dataset.py} file.
+The implementation for the usage can be seen in~\ref{fig:downsampling}.
+Instead of choosing a random subset we choose every $n$th element, where $n$ is the down-sampling factor.
+Additionally, for transparency, the original codebase used CIFAR100, but we chose to change it to CIFAR10.
+\begin{figure}[h]
+    \begin{python}
+        dataset = datasets.CIFAR10(args.data_path, train=is_train,
+        transform=transform, download=True)
+        sample = list(range(0, len(dataset), args.downsample))
+        dataset = torch.utils.data.Subset(dataset, sample)
+        nb_classes = 10
+    \end{python}
+    \caption{Downsampling the dataset.}
+    \label{fig:downsampling}
+\end{figure}
 
-    The second and final change was to create a \texttt{requirements.txt} file for easy installation of the necessary packages.
-    Due to the codebase being incompatible with versions of pytorch larger than 2.0 and Google Colab defaulting to such a version we created this file to easily install all necessary dependencies with a single command.
-    This comes especially in handy because Colab resets the runtime after just a few hours of inactivity, in turn also resetting the changes in installed packages.
-    It eludes us as to why there was no such file already included in the codebase, just a very bare-bones markdown file with requirements.
+The second and final change was to create a \texttt{requirements.txt} file for easy installation of the necessary packages.
+Due to the codebase being incompatible with versions of pytorch larger than 2.0 and Google Colab defaulting to such a version we created this file to easily install all necessary dependencies with a single command.
+This comes especially in handy because Colab resets the runtime after just a few hours of inactivity, in turn also resetting the changes in installed packages.
+It eludes us as to why there was no such file already included in the codebase, just a very bare-bones markdown file with requirements.
 
-    \subsection{Data Augmentation}\label{subsec:data-augmentation}
-    The subsampling helped massively in decreasing the training time, but still just taking 10\% of the dataset for training took three hours to train for 100 epochs on our machines and in Google Colab.
-    We identified that the largest time during training was spent applying transforms to the images.
-    Therefore, a large focus working with this network architecture was on trying to find a sweet spot between transforms and model accuracy.
+\subsection{Data Augmentation}\label{subsec:data-augmentation}
+The subsampling helped massively in decreasing the training time, but still just taking 10\% of the dataset for training took three hours to train for 100 epochs on our machines and in Google Colab.
+We identified that the largest time during training was spent applying transforms to the images.
+Therefore, a large focus working with this network architecture was on trying to find a sweet spot between transforms and model accuracy.
 
-    Before being able to evaluate the performance of different configurations of image transforms, we need some kind of baseline.
-    Hence, we first trained the ConvNeXt network as is first with the paper parameters (\texttt{example\_imagenet}) and example parameters (\texttt{example\_imagenet}).
-    As the example parameters give significantly better results, all future tests will use their hyperparameter configuration.
-    Additionally, we chose to change the mean and standard deviation used for the normalization transform to the ones from CIFAR10 instead of Imagenet1k (\texttt{from-scratch}).
-    The values were not calculated by us, but taken from a StackOverflow\cite{stackoverflow} comment.
-    The resulting accuracy is lower than that when using the initial values, but we prefer proper values over a few more percent accuracy.
-    The testing accuracy curves of the different configurations can be seen in \autoref{fig:data-augmentation}.
+Before being able to evaluate the performance of different configurations of image transforms, we need some kind of baseline.
+Hence, we first trained the ConvNeXt network as is first with the paper parameters (\texttt{example\_imagenet}) and example parameters (\texttt{example\_imagenet}).
+As the example parameters give significantly better results, all future tests will use their hyperparameter configuration.
+Additionally, we chose to change the mean and standard deviation used for the normalization transform to the ones from CIFAR10 instead of Imagenet1k (\texttt{from-scratch}).
+The values were not calculated by us, but taken from a StackOverflow\cite{stackoverflow} comment.
+The resulting accuracy is lower than that when using the initial values, but we prefer proper values over a few more percent accuracy.
+The testing accuracy curves of the different configurations can be seen in \autoref{fig:data-augmentation}.
 
-    With a baseline of about 65\% accuracy established we can now start to experiment with the image transforms.
-    We did this by removing it entirely and reintroducing it in steps with minimal changes in the codebase.
-    One was always necessary, that being the \texttt{ToTensor()} transform as otherwise the training would not even work.
-    The result was very fast, taking about only five minutes, but had abysmal performance (\texttt{only-totensor}).
-    This was very suspicious, and we came to find that the testing procedure used different transforms that include a resize.
-    Therefore, we trained the network on 32 by 32 images and tested it on 224 by 224 images.
-    Using the \texttt{input\_size} command line argument we can change this behaviour to also testing on the proper image size.
-    Still, the accuracy (\texttt{only-totensor\_input-is-32}) is very bad.
+With a baseline of about 65\% accuracy established we can now start to experiment with the image transforms.
+We did this by removing it entirely and reintroducing it in steps with minimal changes in the codebase.
+One was always necessary, that being the \texttt{ToTensor()} transform as otherwise the training would not even work.
+The result was very fast, taking about only five minutes, but had abysmal performance (\texttt{only-totensor}).
+This was very suspicious, and we came to find that the testing procedure used different transforms that include a resize.
+Therefore, we trained the network on 32 by 32 images and tested it on 224 by 224 images.
+Using the \texttt{input\_size} command line argument we can change this behaviour to also testing on the proper image size.
+Still, the accuracy (\texttt{only-totensor\_input-is-32}) is very bad.
 
-    Something that rubbed us the wrong way during the tests before resizing was that the network seemed to don't mind whether the images were 32 by 32 or 224 by 224.
-    The linear layer in the implementation has a fixed value for its input dimensions and the images are indeed their specified size when entering the network.
-    After a bit of digging we found the reason why it did not matter.
-    After the convolution layers the shape of the data is still different between different image sizes, however, the number of channels is the same.
-    In a final step before the classification global average pooling is applied that results in the output shape just being batch size and number of channels.
+Something that rubbed us the wrong way during the tests before resizing was that the network seemed to don't mind whether the images were 32 by 32 or 224 by 224.
+The linear layer in the implementation has a fixed value for its input dimensions and the images are indeed their specified size when entering the network.
+After a bit of digging we found the reason why it did not matter.
+After the convolution layers the shape of the data is still different between different image sizes, however, the number of channels is the same.
+In a final step before the classification global average pooling is applied that results in the output shape just being batch size and number of channels.
 
-    Next, we introduced normalization which only minimally impacted training time, but increased the performance by another 10\% (\texttt{normalize\_input-is-32}).
-    This was still too bad for us to consider as a worth tradeoff, hence we introduced the resizing back to 224 by 224 pixel images (\texttt{resize}).
-    The resizing pushed our training time back into more than one hour but achieved performance comparable to the paper parameters.
-    However, this was still not satisfactory performance wise, and therefore we moved on to playing with the command line arguments for the transforms, as introducing other transforms would modify the codebase too much.
-    The relevant options one can disable via passing arguments to the model is color jitter, auto augmentation and random erasure.
-    Other modifications like horizontal flipping and random cropping cannot be disabled without tampering with the code.
-    Because the documentation of the arguments was so poor in our next test we only managed to disable color jitter, which we found out is always disabled as long as any auto augmentation was done, and random erasure.
-    We only managed to change the default Random Augment to Auto Augment using the Auto Augment flag.
-    To our surprise, this configuration (\texttt{cli-augment-off-but-aa}) gave better results than the example parameters whilst also needing half an hour less to train.
-    The final configuration we tested was to properly disable the auto augmentation as well (\texttt{cli-augment-off}).
-    The results were also better than the example parameters, but slightly worse than the prior configuration while having no change in training time.
+Next, we introduced normalization which only minimally impacted training time, but increased the performance by another 10\% (\texttt{normalize\_input-is-32}).
+This was still too bad for us to consider as a worth tradeoff, hence we introduced the resizing back to 224 by 224 pixel images (\texttt{resize}).
+The resizing pushed our training time back into more than one hour but achieved performance comparable to the paper parameters.
+However, this was still not satisfactory performance wise, and therefore we moved on to playing with the command line arguments for the transforms, as introducing other transforms would modify the codebase too much.
+The relevant options one can disable via passing arguments to the model is color jitter, auto augmentation and random erasure.
+Other modifications like horizontal flipping and random cropping cannot be disabled without tampering with the code.
+Because the documentation of the arguments was so poor in our next test we only managed to disable color jitter, which we found out is always disabled as long as any auto augmentation was done, and random erasure.
+We only managed to change the default Random Augment to Auto Augment using the Auto Augment flag.
+To our surprise, this configuration (\texttt{cli-augment-off-but-aa}) gave better results than the example parameters whilst also needing half an hour less to train.
+The final configuration we tested was to properly disable the auto augmentation as well (\texttt{cli-augment-off}).
+The results were also better than the example parameters, but slightly worse than the prior configuration while having no change in training time.
 
-    The conclusion of these experiments was that we can improve the performance of training from scratch by varying the command line arguments but not the training time.
-    Hence, in the coming chapters we will use it in tandem with the example parameter configuration for testing when wanting to squeeze out a bit more performance.
-    \begin{figure}[h]
-        \centering
-        \includegraphics[width=0.9\textwidth]{images/data_augmentation}
-        \caption{Comparison of different data augmentation configurations.}
-        \label{fig:data-augmentation}
-    \end{figure}
+The conclusion of these experiments was that we can improve the performance of training from scratch by varying the command line arguments but not the training time.
+Hence, in the coming chapters we will use it in tandem with the example parameter configuration for testing when wanting to squeeze out a bit more performance.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/data_augmentation}
+    \caption{Comparison of different data augmentation configurations.}
+    \label{fig:data-augmentation}
+\end{figure}
 
-    After experimenting with the augmentation, we wanted to see how the images looked after being transformed.
-    \autoref{fig:image-transforms} shows the different transform configurations being applied to a selection of images.
-    The first row are the original images resized to 224 by 224 with bicubic interpolation.
-    The next row depicts the transforms being applied when not changing anything in the command line parameters.
-    Thirdly, are the images generated when disabling all command line arguments but the auto augmentation.
-    In the final row all transforms able to be disabled in the command line are displayed.
-    \begin{figure}[h]
-        \centering
-        \includegraphics[width=0.7\textwidth]{images/image_transforms}
-        \caption{Impact of image transforms on dataset.}
-        \label{fig:image-transforms}
-    \end{figure}
+After experimenting with the augmentation, we wanted to see how the images looked after being transformed.
+\autoref{fig:image-transforms} shows the different transform configurations being applied to a selection of images.
+The first row are the original images resized to 224 by 224 with bicubic interpolation.
+The next row depicts the transforms being applied when not changing anything in the command line parameters.
+Thirdly, are the images generated when disabling all command line arguments but the auto augmentation.
+In the final row all transforms able to be disabled in the command line are displayed.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{images/image_transforms}
+    \caption{Impact of image transforms on dataset.}
+    \label{fig:image-transforms}
+\end{figure}
 
-    \subsection{Finetuning}\label{subsec:finetuning}
-    During our trials for improved training time we also experimented with the finetuning in the network.
-    It was astounding that just using the command in~\cite{ayush0finetune} we managed to achieve an accuracy of 95\% (\texttt{finetune}) even though for training from scratch we capped at 70\%.
-    Therefore, our goal was to try and squeeze out as much performance as possible.
-    The results for our finetuning can be seen in \autoref{fig:finetuning} and the configurations will be explained in the next paragraphs.
-    \begin{figure}[h]
-        \centering
-        \includegraphics[width=0.9\textwidth]{images/finetuning}
-        \caption{Comparison of finetuning configurations.}
-        \label{fig:finetuning}
-    \end{figure}
+\subsection{Finetuning}\label{subsec:finetuning}
+During our trials for improved training time we also experimented with the finetuning in the network.
+It was astounding that just using the command in~\cite{ayush0finetune} we managed to achieve an accuracy of 95\% (\texttt{finetune}) even though for training from scratch we capped at 70\%.
+Therefore, our goal was to try and squeeze out as much performance as possible.
+The results for our finetuning can be seen in \autoref{fig:finetuning} and the configurations will be explained in the next paragraphs.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/finetuning}
+    \caption{Comparison of finetuning configurations.}
+    \label{fig:finetuning}
+\end{figure}
 
-    For our finetuning instead of training for 100 epochs, we only trained for 10, except in one case.
-    We always chose the example parameters and fine-tuned the pretrained ConvNeXt-T for ImageNet-1K model\cite{repository}.
-    Finetuning can be initiated by specifying a reference to a pretrained model, in our case a link, as a command line parameter with the \texttt{--finetune} option.
+For our finetuning instead of training for 100 epochs, we only trained for 10, except in one case.
+We always chose the example parameters and fine-tuned the pretrained ConvNeXt-T for ImageNet-1K model\cite{repository}.
+Finetuning can be initiated by specifying a reference to a pretrained model, in our case a link, as a command line parameter with the \texttt{--finetune} option.
 
-    We did three different sets of tests when it came to finetuning in order to squeeze out performance.
-    None of these included varying any hyperparameter, other than our first test with different batch sizes.
-    On our local machine, the maximum amount of video memory was eight gigabytes.
-    As a result, locally, we were limited to a batch size of 64.
-    We tried out different powers of two, i.e.\ 16 (\texttt{finetune\_batch-size-16}), 32 (\texttt{finetune\_batch-size-32}), 64 (\texttt{finetune}), and 100 (\texttt{finetune\_batch-size-100}) which is the maximum Google Colab can do.
-    The results show that all of them give similar results, but the batch size of 64 comes out on top.
+We did three different sets of tests when it came to finetuning in order to squeeze out performance.
+None of these included varying any hyperparameter, other than our first test with different batch sizes.
+On our local machine, the maximum amount of video memory was eight gigabytes.
+As a result, locally, we were limited to a batch size of 64.
+We tried out different powers of two, i.e.\ 16 (\texttt{finetune\_batch-size-16}), 32 (\texttt{finetune\_batch-size-32}), 64 (\texttt{finetune}), and 100 (\texttt{finetune\_batch-size-100}) which is the maximum Google Colab can do.
+The results show that all of them give similar results, but the batch size of 64 comes out on top.
 
-    In our second test we specified once again the option that the input images are of size 32 by 32.
-    This gave us, with no contest, the worst finetuning performance.
-    In our data augmentation trials this option was also dead last, and we do not conjecture that in this case the poor performance comes from the pretrained weights having been obtained with different image dimensions.
+In our second test we specified once again the option that the input images are of size 32 by 32.
+This gave us, with no contest, the worst finetuning performance.
+In our data augmentation trials this option was also dead last, and we do not conjecture that in this case the poor performance comes from the pretrained weights having been obtained with different image dimensions.
 
-    As a final test we put all our knowledge obtained until now to try and create the best configuration possible.
-    That means we took the example parameters and turned off all command line toggleable data augmentation except for auto augmentation.
-    The results were only slightly better than our initial baseline (\texttt{finetune\_augment-off-but-aa}).
-    Thinking we can do even better, we tested our luck on the entire dataset.
-    This netted us a very formidable performance of 98\% (\texttt{best-finetune}).
-    But also took as long to train as a normal network for 100 epochs with only 10\% of the data.
-    Spurred on by this promising number we also tried and increased the number of epochs trained to 20, but the overall performance stayed about the same even though the training took twice as long (\texttt{best-finetune-20ep}).
+As a final test we put all our knowledge obtained until now to try and create the best configuration possible.
+That means we took the example parameters and turned off all command line toggleable data augmentation except for auto augmentation.
+The results were only slightly better than our initial baseline (\texttt{finetune\_augment-off-but-aa}).
+Thinking we can do even better, we tested our luck on the entire dataset.
+This netted us a very formidable performance of 98\% (\texttt{best-finetune}).
+But also took as long to train as a normal network for 100 epochs with only 10\% of the data.
+Spurred on by this promising number we also tried and increased the number of epochs trained to 20, but the overall performance stayed about the same even though the training took twice as long (\texttt{best-finetune-20ep}).
 
-    Having obtained a satisfying enough performance and configuration, we turned our attention to understanding the underlying mechanism of finetuning in this implementation.
-    Differing from the way it was presented in the lecture, which froze all weights except for the last layer, all parameters are adjusted during the finetuning training.
-    What they do is create the model specified by the user, in our case the tiny version, load the state dictionary of the pretrained model and override all weights and biases in each layer that has the same shape.
-    Meaning, because we used the tiny pretrained model, the only weights and biases not loaded and kept uninitialized were that of the final classification layer.
+Having obtained a satisfying enough performance and configuration, we turned our attention to understanding the underlying mechanism of finetuning in this implementation.
+Differing from the way it was presented in the lecture, which froze all weights except for the last layer, all parameters are adjusted during the finetuning training.
+What they do is create the model specified by the user, in our case the tiny version, load the state dictionary of the pretrained model and override all weights and biases in each layer that has the same shape.
+Meaning, because we used the tiny pretrained model, the only weights and biases not loaded and kept uninitialized were that of the final classification layer.
 
 
-    \subsection{Network Reversion}\label{subsec:network-reversion}
-    The final focus of experimenting with this implementation was trying to revert individual changes made by the authors to the initial ResNet-50.
-    This endeavour requires us to abandon the idea of minimizing the changes to existing codebase, and we will define the precise changes made to the network architecture.
-    In the beginning, we focus on more simple and minor changes and then move on to more involved and coupled changes.
-    However, due to time limits and its complexity we were not able to revert all changes made.
-    Every modification was done individually and the changes do not aggregate.
-    As with the previous chapters, the results can be seen in \autoref{fig:reverts}.
-    The baseline is our best result from the data augmentation experiments and can be identified with \texttt{cli-augment-off-but-aa}.
-    All other reverts will use the same command line arguments to let the changes be the only varying factor.
+\subsection{Network Reversion}\label{subsec:network-reversion}
+The final focus of experimenting with this implementation was trying to revert individual changes made by the authors to the initial ResNet-50.
+This endeavour requires us to abandon the idea of minimizing the changes to existing codebase, and we will define the precise changes made to the network architecture.
+In the beginning, we focus on more simple and minor changes and then move on to more involved and coupled changes.
+However, due to time limits and its complexity we were not able to revert all changes made.
+Every modification was done individually and the changes do not aggregate.
+As with the previous chapters, the results can be seen in \autoref{fig:reverts}.
+The baseline is our best result from the data augmentation experiments and can be identified with \texttt{cli-augment-off-but-aa}.
+All other reverts will use the same command line arguments to let the changes be the only varying factor.
 
-    \begin{figure}[h]
-        \centering
-        \includegraphics[width=0.9\textwidth]{images/reverts}
-        \caption{Comparison of different reversions.}
-        \label{fig:reverts}
-    \end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/reverts}
+    \caption{Comparison of different reversions.}
+    \label{fig:reverts}
+\end{figure}
 
-    First up was reverting from the GELU activation function to ReLU\@.
-    This was a very quick and easy change, as there is only one line of code to change.
-    It is located in the class definition of \texttt{Block} in the \texttt{convnext.py} file.
-    All other changes are also done in the same file, so for brevity it will be omitted.
-    The resulting network performance is slightly lower than the baseline (\texttt{revert-relu}).
+First up was reverting from the GELU activation function to ReLU\@.
+This was a very quick and easy change, as there is only one line of code to change.
+It is located in the class definition of \texttt{Block} in the \texttt{convnext.py} file.
+All other changes are also done in the same file, so for brevity it will be omitted.
+The resulting network performance is slightly lower than the baseline (\texttt{revert-relu}).
 
-    The next change was reverting from their custom implementation of layer normalization to batch normalization.
-    This was also not too difficult and we just exchanged the definition of the norm in the Block class with the PyTorch inbuilt BatchNorm.
-    Additionally, in the forward method the normalization and the first permutation swapped places.
-    The performance of the network significantly shot up to an impressive 76\% (\texttt{bn-replaces-ln}).
+The next change was reverting from their custom implementation of layer normalization to batch normalization.
+This was also not too difficult and we just exchanged the definition of the norm in the Block class with the PyTorch inbuilt BatchNorm.
+Additionally, in the forward method the normalization and the first permutation swapped places.
+The performance of the network significantly shot up to an impressive 76\% (\texttt{bn-replaces-ln}).
 
-    % vlt: kernel size und block layout /figure 3 und inverted bottleneck
-    % more activation functions
-    % more normalization layers
-    % nicht: resnextify, seperate downsampling layers
+% vlt: kernel size und block layout /figure 3 und inverted bottleneck
+% more activation functions
+% more normalization layers
+% nicht: resnextify, seperate downsampling layers
 
-    % erklären was man im code gemacht hat
-    % gelu -> relu: genau eine zeile geändert
-    % ln -> bn: layer norm mit bn in block ersetzt und im forward das permute erst nach der norm gemacht
+% erklären was man im code gemacht hat
+% gelu -> relu: genau eine zeile geändert
+% ln -> bn: layer norm mit bn in block ersetzt und im forward das permute erst nach der norm gemacht
 
-    \section{Conclusion}\label{sec:conclusion}
-    % could have played around more with hyperparameters
+\section{Conclusion}\label{sec:conclusion}
+% could have played around more with hyperparameters
 
-    \printbibliography
+\printbibliography
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \section*{Checklist}
-    \input{checklist}
+\section*{Checklist}
+\input{checklist}
 
 \end{document}
