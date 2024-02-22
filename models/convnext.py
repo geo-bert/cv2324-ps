@@ -44,8 +44,10 @@ class Block(nn.Module):
         self.pwconv1 = nn.Linear(
             dim, inverted_bottleneck * dim
         )  # pointwise/1x1 convs, implemented with linear layers
+        self.std_norm1 = nn.BatchNorm2d(56, 28)
         self.act = nn.GELU()
         self.pwconv2 = nn.Linear(inverted_bottleneck * dim, dim)
+        self.std_norm2 = nn.BatchNorm2d(dim)
         self.gamma = (
             nn.Parameter(layer_scale_init_value * torch.ones((dim)), requires_grad=True)
             if layer_scale_init_value > 0
@@ -64,11 +66,11 @@ class Block(nn.Module):
             x = self.act(x)
         x = self.pwconv1(x)
         if self.add_norm_layers:
-            x = self.norm(x)
+            x = self.std_norm1(x)
         x = self.act(x)
         x = self.pwconv2(x)
-        if self.add_norm_layers:
-            x = self.norm(x)
+        # if self.add_norm_layers:
+        #     x = self.std_norm2(x)
         if self.gamma is not None:
             x = self.gamma * x
         x = x.permute(0, 3, 1, 2)  # (N, H, W, C) -> (N, C, H, W)
@@ -111,6 +113,8 @@ class ConvNeXt(nn.Module):
         super().__init__()
 
         print("inverted_bottleneck: " + str(inverted_bottleneck))
+        print("add_act_fcts: " + str(add_act_fcts))
+        print("add_norm_layers: " + str(add_norm_layers))
         self.downsample_layers = (
             nn.ModuleList()
         )  # stem and 3 intermediate downsampling conv layers
