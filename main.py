@@ -93,7 +93,19 @@ def get_args_parser():
         "--inverted_bottleneck",
         type=int,
         default=4,
-        help="defines the size of the inverted bottleneck (default: 4.0)",
+        help="defines the size of the inverted bottleneck (default: 4)",
+    )
+    parser.add_argument(
+        "--kernel_size",
+        type=int,
+        default=7,
+        help="size of the kernels in an depthwise convolution block (default: 7, test 4)",
+    )
+    parser.add_argument(
+        "--downsample_kernel_size",
+        type=int,
+        default=2,
+        help="size of the kernels in downsample convolution layers (default: 2, has size 3 in ResNet)",
     )
     parser.add_argument("--input_size", default=224, type=int, help="image input size")
     parser.add_argument(
@@ -527,6 +539,8 @@ def main(args):
         add_norm_layers=args.add_norm_layers,
         add_act_fcts=args.add_act_fcts,
         inverted_bottleneck=args.inverted_bottleneck,
+        kernel_size=args.kernel_size,
+        downsample_kernel_size=args.downsample_kernel_size,
     )
 
     if args.finetune:
@@ -803,6 +817,8 @@ def main(args):
             add_norm_layers=args.add_norm_layers,
             add_act_fcts=args.add_act_fcts,
             inverted_bottleneck=args.inverted_bottleneck,
+            kernel_size=args.kernel_size,
+            downsample_kernel_size=args.downsample_kernel_size,
         )
 
         checkpoint = torch.load(

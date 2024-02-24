@@ -23,8 +23,10 @@ class Block(nn.Module):
         dim (int): Number of input channels.
         drop_path (float): Stochastic depth rate. Default: 0.0
         layer_scale_init_value (float): Init value for Layer Scale. Default: 1e-6.
-        add_norm_layers (bool): Marcel: add additional normalization layers inbetween the ConvNet blocks
-        add_act_fcts (bool): Marcel: add additional activation functions inbetween the ConvNet blocks
+        add_norm_layers (bool): Marcel: add additional normalization layers inbetween the ConvNet blocks. Def: False
+        add_act_fcts (bool): Marcel: add additional activation functions inbetween the ConvNet blocks. Def: False
+        inverted_bottleneck (int): Marcel: defines the size of the inverted bottleneck. Default: 4, to test: 1
+        kernel_size (int): Marcel: Kernel size of the first conv layer. Default: 7, to test: 4
     """
 
     def __init__(
@@ -35,16 +37,17 @@ class Block(nn.Module):
         add_norm_layers=False,
         add_act_fct=False,
         inverted_bottleneck=4,
+        kernel_size=7,
     ):
         super().__init__()
         self.dwconv = nn.Conv2d(
-            dim, dim, kernel_size=7, padding=3, groups=dim
+            dim, dim, kernel_size=kernel_size, padding=3, groups=dim
         )  # depthwise conv
-        self.norm = LayerNorm(dim, eps=1e-6)
+        self.norm = nn.BatchNorm2d(dim)  # LayerNorm(dim, eps=1e-6)
         self.pwconv1 = nn.Linear(
             dim, inverted_bottleneck * dim
         )  # pointwise/1x1 convs, implemented with linear layers
-        self.std_norm1 = nn.BatchNorm2d(56, 28)
+        self.std_norm1 = nn.BatchNorm2d(inverted_bottleneck * dim)
         self.act = nn.GELU()
         self.pwconv2 = nn.Linear(inverted_bottleneck * dim, dim)
         self.std_norm2 = nn.BatchNorm2d(dim)
@@ -60,22 +63,30 @@ class Block(nn.Module):
     def forward(self, x):
         input = x
         x = self.dwconv(x)
-        x = x.permute(0, 2, 3, 1)  # (N, C, H, W) -> (N, H, W, C)
         x = self.norm(x)
+        x = x.permute(
+            0, 2, 3, 1
+        )  # (N, C, H, W) -> (N, H, W, C), usually before first norm
         if self.add_act_fct:
             x = self.act(x)
         x = self.pwconv1(x)
         if self.add_norm_layers:
+            x = x.permute(0, 3, 1, 2)  # (N, H, W, C) -> (N, C, H, W)
             x = self.std_norm1(x)
+            x = x.permute(0, 2, 3, 1)  # (N, C, H, W) -> (N, H, W, C)
         x = self.act(x)
         x = self.pwconv2(x)
-        # if self.add_norm_layers:
-        #     x = self.std_norm2(x)
+        if self.add_norm_layers:
+            x = x.permute(0, 3, 1, 2)  # (N, H, W, C) -> (N, C, H, W)
+            x = self.std_norm2(x)
+            x = x.permute(0, 2, 3, 1)  # (N, C, H, W) -> (N, H, W, C)
         if self.gamma is not None:
             x = self.gamma * x
         x = x.permute(0, 3, 1, 2)  # (N, H, W, C) -> (N, C, H, W)
 
         x = input + self.drop_path(x)
+        if self.add_act_fct:
+            x = self.act(x)
         return x
 
 
@@ -92,9 +103,11 @@ class ConvNeXt(nn.Module):
         drop_path_rate (float): Stochastic depth rate. Default: 0.
         layer_scale_init_value (float): Init value for Layer Scale. Default: 1e-6.
         head_init_scale (float): Init scaling value for classifier weights and biases. Default: 1.
-        add_norm_layers (bool): Marcel: add additional normalization layers inbetween the ConvNet blocks
-        add_act_fcts (bool): Marcel: add additional activation functions inbetween the ConvNet blocks
-        inverted_bottleneck (int): Marcel: defines the size of the inverted bottleneck. Default: 4
+        add_norm_layers (bool): Marcel: add additional normalization layers inbetween the ConvNet blocks. Def: False
+        add_act_fcts (bool): Marcel: add additional activation functions inbetween the ConvNet blocks. Def: False
+        inverted_bottleneck (int): Marcel: defines the size of the inverted bottleneck. Default: 4, to test: 1
+        kernel_size (int): Marcel: Kernel size of the first conv layer. Default: 7, to test: 4
+        downsample_kernel_size (int): Marcel: Kernsel size of the downsampling conv layers. Default: 2, to test: 3
     """
 
     def __init__(
@@ -109,12 +122,16 @@ class ConvNeXt(nn.Module):
         add_norm_layers=False,
         add_act_fcts=False,
         inverted_bottleneck=4,
+        kernel_size=7,
+        downsample_kernel_size=2,
     ):
         super().__init__()
 
         print("inverted_bottleneck: " + str(inverted_bottleneck))
         print("add_act_fcts: " + str(add_act_fcts))
         print("add_norm_layers: " + str(add_norm_layers))
+        print("kernel_size: " + str(kernel_size))
+        print("downsample_kernel_size: " + str(downsample_kernel_size))
         self.downsample_layers = (
             nn.ModuleList()
         )  # stem and 3 intermediate downsampling conv layers
@@ -126,7 +143,9 @@ class ConvNeXt(nn.Module):
         for i in range(3):
             downsample_layer = nn.Sequential(
                 LayerNorm(dims[i], eps=1e-6, data_format="channels_first"),
-                nn.Conv2d(dims[i], dims[i + 1], kernel_size=2, stride=2),
+                nn.Conv2d(
+                    dims[i], dims[i + 1], kernel_size=downsample_kernel_size, stride=2
+                ),
             )
             self.downsample_layers.append(downsample_layer)
 
@@ -145,6 +164,7 @@ class ConvNeXt(nn.Module):
                         add_norm_layers=add_norm_layers,
                         add_act_fct=add_act_fcts,
                         inverted_bottleneck=inverted_bottleneck,
+                        kernel_size=kernel_size,
                     )
                     for j in range(depths[i])
                 ]

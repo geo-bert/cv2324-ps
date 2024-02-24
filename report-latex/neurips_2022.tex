@@ -80,6 +80,7 @@
 
 \section{Introduction}\label{sec:introduction}
 
+
 \section{ConvNeXt}\label{sec:convnext}
 % summarize the key aspects of the paper, 1 - 1.5p
 ConvNeXt\cite{liu2022convnet}.
@@ -88,12 +89,40 @@ One of the most famous image classification models is the ResNet, using conventi
 
 As we will discuss each of the reversions done for ConvNeXt later, we will now briefly go through the most important adaptions made in comparison to a standard ResNet.
 
-\section {Stage compute ratio}
+% \section {Stage compute ratio}
 While ResNet-50 uses a shape of (3,4,6,3), Swin Transformers have a ratio of 1:1:9:1. In ConvNeXt, the shape is set to (3,3,9,3)
+
 patchify
+
 In opposite to traditional ConvNet designs, vision transformers do not use overlapping kernels in the convolution input layers, but instead non overlapping, usually larger kernels. ConvNeXt keeps small kernels but let not overlap them, reaching even slightly better results with this simplifying approach.
 
+ResNeXt-ify
 
+The Network ResNeXt works with grouped convolution, grouping convolutional filters. ConvNeXt uses similar depthwise convolution which is a special case of grouped convolution.
+
+Inverted bottleneck
+
+As used in Transformers, ConvNeXt uses an inverted bottleneck, i.e. the dimension of the hidden convolution layer is increased by a ratio of 4. Although this inverted bottleneck has has more FLOPs because of the used depthwise convolution layer, overall FLOPs drop, as the used 1x1 convolution Layers reduce the the FLOPs drastically (for layer structure see \autoref{fig:bottleneck})
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/bottleneck}
+    \caption{Evolution of the bottleneck}
+    \label{fig:bottleneck}
+\end{figure}
+
+Large Kernel sizes
+
+Another key feature of transformers is that its layers have global reception. In order to approximate this approach, ConvNeXt runs with increased sized kernels, going up to 7x7 which is also the minimum size in Swin Transformers.
+
+Minor changes
+
+Using GELU
+
+- Using the GELU activation function which operates slightly smoother then ReLU and is used in multiple famous transformers.
+- Reduced number of activation functions
+- Reduced number of normalization layers
+- Using the simpler Layer Normalization instead of BatchNorm
+- Using separate downsample layers with stabilizing LNs respectively
 
 
 \section{Documentation}\label{sec:documentation}
