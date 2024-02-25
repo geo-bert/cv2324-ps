@@ -70,49 +70,60 @@
 
 
 \begin{abstract}
-    The abstract paragraph should be indented \nicefrac{1}{2}~inch (3~picas) on both the left- and right-hand margins.
-    Use 10~point type, with a vertical spacing (leading) of 11~points.
-    The word \textbf{Abstract} must be centered, bold, and in point size 12.
-    Two line spaces precede the abstract.
-    The abstract must be limited to one paragraph.
+    The aim of this report is to investigate the ConvNeXt network architecture and its components and try it with the CIFAR10 dataset.
+    For that we used an already existing implementation that was built around and evaluated on the ImageNet1k dataset.
+    Therefore, we played around with the mechanisms used in the implementation such as data augmentation, finetuning and the network architecture itself.
+    What we concluded in our findings is that it works very well when using a pretrained model but only moderately well when training from scratch.
 \end{abstract}
 
 
 \section{Introduction}\label{sec:introduction}
-
+In this proseminar we have been tasked with familiarizing ourselves with an existing implementation of a neural network architecture.
 
 \section{ConvNeXt}\label{sec:convnext}
 % summarize the key aspects of the paper, 1 - 1.5p
 ConvNeXt\cite{liu2022convnet}.
-ConvNeXt is the label for a machine learning project of Liu, Mao et al., regarding image classification. It is supposed to show an alternative to the in machine learning science currently mainly focussed vision transformers. For this they start with a standard and modify it with techniques used or developed in vision transformers and optimize training and model parameters in respect to maximum accuracy.
-One of the most famous image classification models is the ResNet, using conventional convolution layers, reaching high scores in terms of accuracy and being base model for multiple other ConvNets. it comes in different variants, defined by the structural depth. For ConvNeXt both, the ResNet-50 with around 4.5e9 FLOPs and ResNet-200 having around 15e9 FLOPs are used and compared with different parameters. On the counterpart, looking at transformers, originally abandon any convolutions, ConvNext implements design principles of the Swin Transformer that combines the transformers technology and convolutions, to achieve higher accuracy and comparing it to the accuracy of the standard Swin Transformer. The derivatives used are Swin-T and Swin-B for ResNet-50 and ResNet-200 respectively. Besides that, ConvNeXt uses an adapted set of training parameters like an increased number of epochs, a special set of data augmentation and the AdamW optimizer.
+ConvNeXt is the label for a machine learning project of Liu, Mao et al., regarding image classification.
+It is supposed to show an alternative to the in machine learning science currently mainly focussed vision transformers.
+For this they start with a standard and modify it with techniques used or developed in vision transformers and optimize training and model parameters in respect to maximum accuracy.
+One of the most famous image classification models is the ResNet, using conventional convolution layers, reaching high scores in terms of accuracy and being base model for multiple other ConvNets.
+it comes in different variants, defined by the structural depth.
+For ConvNeXt both, the ResNet-50 with around 4.5e9 FLOPs and ResNet-200 having around 15e9 FLOPs are used and compared with different parameters.
+On the counterpart, looking at transformers, originally abandon any convolutions, ConvNext implements design principles of the Swin Transformer that combines the transformers technology and convolutions, to achieve higher accuracy and comparing it to the accuracy of the standard Swin Transformer.
+The derivatives used are Swin-T and Swin-B for ResNet-50 and ResNet-200 respectively.
+Besides that, ConvNeXt uses an adapted set of training parameters like an increased number of epochs, a special set of data augmentation and the AdamW optimizer.
 
 As we will discuss each of the reversions done for ConvNeXt later, we will now briefly go through the most important adaptions made in comparison to a standard ResNet.
 
 % \section {Stage compute ratio}
-While ResNet-50 uses a shape of (3,4,6,3), Swin Transformers have a ratio of 1:1:9:1. In ConvNeXt, the shape is set to (3,3,9,3)
+While ResNet-50 uses a shape of (3,4,6,3), Swin Transformers have a ratio of 1:1:9:1.
+In ConvNeXt, the shape is set to (3,3,9,3)
 
 patchify
 
-In opposite to traditional ConvNet designs, vision transformers do not use overlapping kernels in the convolution input layers, but instead non overlapping, usually larger kernels. ConvNeXt keeps small kernels but let not overlap them, reaching even slightly better results with this simplifying approach.
+In opposite to traditional ConvNet designs, vision transformers do not use overlapping kernels in the convolution input layers, but instead non overlapping, usually larger kernels.
+ConvNeXt keeps small kernels but let not overlap them, reaching even slightly better results with this simplifying approach.
 
 ResNeXt-ify
 
-The Network ResNeXt works with grouped convolution, grouping convolutional filters. ConvNeXt uses similar depthwise convolution which is a special case of grouped convolution.
+The Network ResNeXt works with grouped convolution, grouping convolutional filters.
+ConvNeXt uses similar depthwise convolution which is a special case of grouped convolution.
 
 Inverted bottleneck
 
-As used in Transformers, ConvNeXt uses an inverted bottleneck, i.e. the dimension of the hidden convolution layer is increased by a ratio of 4. Although this inverted bottleneck has has more FLOPs because of the used depthwise convolution layer, overall FLOPs drop, as the used 1x1 convolution Layers reduce the the FLOPs drastically (for layer structure see \autoref{fig:bottleneck})
+As used in Transformers, ConvNeXt uses an inverted bottleneck, i.e.\ the dimension of the hidden convolution layer is increased by a ratio of 4.
+Although this inverted bottleneck has has more FLOPs because of the used depthwise convolution layer, overall FLOPs drop, as the used 1x1 convolution Layers reduce the the FLOPs drastically (for layer structure see \autoref{fig:bottleneck})
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{images/bottleneck}
+    \includegraphics[width=0.7\textwidth]{images/bottleneck}
     \caption{Evolution of the Bottleneck}
     \label{fig:bottleneck}
 \end{figure}
 
 Large Kernel sizes
 
-Another key feature of transformers is that its layers have global reception. In order to approximate this approach, ConvNeXt runs with increased sized kernels, going up to 7x7 which is also the minimum size in Swin Transformers.
+Another key feature of transformers is that its layers have global reception.
+In order to approximate this approach, ConvNeXt runs with increased sized kernels, going up to 7x7 which is also the minimum size in Swin Transformers.
 
 Minor changes
 
@@ -164,11 +175,11 @@ Instead of choosing a random subset we choose every $n$th element, where $n$ is 
 Additionally, for transparency, the original codebase used CIFAR100, but we chose to change it to CIFAR10.
 \begin{figure}[h]
     \begin{python}
-        dataset = datasets.CIFAR10(args.data_path, train=is_train,
-        transform=transform, download=True)
-        sample = list(range(0, len(dataset), args.downsample))
-        dataset = torch.utils.data.Subset(dataset, sample)
-        nb_classes = 10
+dataset = datasets.CIFAR10(args.data_path, train=is_train,
+transform=transform, download=True)
+sample = list(range(0, len(dataset), args.downsample))
+dataset = torch.utils.data.Subset(dataset, sample)
+nb_classes = 10
     \end{python}
     \caption{Downsampling the dataset.}
     \label{fig:downsampling}
@@ -223,7 +234,7 @@ The conclusion of these experiments was that we can improve the performance of t
 Hence, in the coming chapters we will use it in tandem with the example parameter configuration for testing when wanting to squeeze out a bit more performance.
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{images/data_augmentation}
+    \includegraphics[width=0.7\textwidth]{images/data_augmentation}
     \caption{Comparison of different data augmentation configurations.}
     \label{fig:data-augmentation}
 \end{figure}
@@ -248,7 +259,7 @@ Therefore, our goal was to try and squeeze out as much performance as possible.
 The results for our finetuning can be seen in \autoref{fig:finetuning} and the configurations will be explained in the next paragraphs.
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{images/finetuning}
+    \includegraphics[width=0.7\textwidth]{images/finetuning}
     \caption{Comparison of finetuning configurations.}
     \label{fig:finetuning}
 \end{figure}
@@ -283,7 +294,9 @@ Meaning, because we used the tiny pretrained model, the only weights and biases 
 
 
 \subsection{Visualization and comparison of filters}\label{subsec:filter-images}
-Images of filters in the convolution layers are sometimes difficult to interpret, but still worth a glance. In our case we focussed on differences between a pretrained ConvNeXt tiny model and our trained-from-scratch standard model with the settings we found out to be best in our scenario. We also looked at differences between the models trained with our data only but with different parameters but could not find relevant differences there, which is why we wont present it here.
+Images of filters in the convolution layers are sometimes difficult to interpret, but still worth a glance.
+In our case we focussed on differences between a pretrained ConvNeXt tiny model and our trained-from-scratch standard model with the settings we found out to be best in our scenario.
+We also looked at differences between the models trained with our data only but with different parameters but could not find relevant differences there, which is why we wont present it here.
 
 \subsection{Network Reversion}\label{subsec:network-reversion}
 The final focus of experimenting with this implementation was trying to revert individual changes made by the authors to the initial ResNet-50.
@@ -293,11 +306,12 @@ However, due to time limits and its complexity we were not able to revert all ch
 Every modification was done individually and the changes do not aggregate.
 As with the previous chapters, the results can be seen in \autoref{fig:reverts}.
 The baseline is our best result from the data augmentation experiments and can be identified with \texttt{cli-augment-off-but-aa}.
-All other reverts will use the same command line arguments to let the changes be the only varying factor. For most reverts we added parameters that can be set by commandline arguments.
+All other reverts will use the same command line arguments to let the changes be the only varying factor.
+For most reverts we added parameters that can be set by commandline arguments.
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{images/reverts}
+    \includegraphics[width=0.7\textwidth]{images/reverts}
     \caption{Comparison of different reversions.}
     \label{fig:reverts}
 \end{figure}
@@ -314,55 +328,74 @@ Additionally, in the forward method the normalization and the first permutation 
 The performance of the network significantly shot up to an impressive 76\% (\texttt{bn-replaces-ln}).
 
 kernel size
-The kernel size of the ConvNeXt network is per standard larger than in most other ConvNets. We decreased the number from 7x7 back to the gold standard of 4x4, by adjusting the responsive parameter in the depthwise conv layer in the ConvNeXt blocks.
-\begin{lstlisting}{Name}
-        self.dwconv = nn.Conv2d(dim, dim,kernel_size=4, padding=3, groups=dim)
-\end{lstlisting}
+The kernel size of the ConvNeXt network is per standard larger than in most other ConvNets.
+We decreased the number from 7x7 back to the gold standard of 4x4, by adjusting the responsive parameter in the depthwise conv layer in the ConvNeXt blocks.
+\begin{python}
+self.dwconv = nn.Conv2d(dim, dim,kernel_size=4, padding=3, groups=dim)
+\end{python}
+
 With this change we achieved an maximum accuracy of 70.7\% so just slightly below the accuracy with larger kernels, which matches the Observations of the paper.
 
 00:01:51
 
 activation functions
-In ConvNeXt, the ReLU activation functions of e.g. ResNeXt are replaced with GELU functions. Furthermore the authors reduced the number of activation functions to one per block. To revert this change, we added two GELU function in each block such there are three activation functions at all, one after the first two Conv Layers respectively and one at the end of each block (same as in the ResNet Block in figure 4 in the paper, just with GELU functions).
-As a result we got a slightly higher accuracy of tbd\%. The training time per epoch stayed the same.
+In ConvNeXt, the ReLU activation functions of e.g. ResNeXt are replaced with GELU functions.
+Furthermore the authors reduced the number of activation functions to one per block.
+To revert this change, we added two GELU function in each block such there are three activation functions at all, one after the first two Conv Layers respectively and one at the end of each block (same as in the ResNet Block in figure 4 in the paper, just with GELU functions).
+As a result we got a slightly higher accuracy of tbd\%.
+The training time per epoch stayed the same.
 00:01:57
 
-inverted bottleneck: The principle of the inverted bottleneck is improving the result of ConvNeXts accuracy by 0.7\%. Instead of reducing the dimensions within a block, the dimensions are increased by a factor of four between the second and third Conv Layer.
+inverted bottleneck: The principle of the inverted bottleneck is improving the result of ConvNeXts accuracy by 0.7\%.
+Instead of reducing the dimensions within a block, the dimensions are increased by a factor of four between the second and third Conv Layer.
 To revert this, we added a parameter \texttt{inverted\_bottleneck}
 to be able to manipulate the factor and set it to one.
 
-\begin{lstlisting}{Name}
-    self.pwconv1 = nn.Linear(dim, inverted_bottleneck * dim)
-    self.pwconv2 = nn.Linear(inverted_bottleneck * dim, dim)
-\end{lstlisting}
+
+\begin{python}
+self.pwconv1 = nn.Linear(dim, inverted_bottleneck * dim)
+self.pwconv2 = nn.Linear(inverted_bottleneck * dim, dim)
+\end{python}
 
 The result was in fact a significant lower accuracy of 68.9\%.
 
 normalization layers
-In order to improve the performance the number of normalization layers in ConvNeXt is minimized to one at each block. We tested a model with three BatchNorm layers, as it is used in ResNet. The only challenging part there is the calculation of the correct number of dimensions at each position in the model respectively. To use the BatchNorm layers we surrounded them by permutation functions to have the dataflow in correct shape. The result looks like this for each added normalization layer (just with different factors for the dimensions in the initialization, as the dimensions are dependent of the position in the model):
-\begin{lstlisting}{Name}
-    # initialize BatchNorm Layer
-    self.std_norm1 = nn.BatchNorm2(inverted_bottleneck * dim)
-\end{lstlisting}
-And in \texttt{forward}:
-\begin{lstlisting}{Name}
-    x = x.permute(0, 3, 1, 2)
-    x = self.std_norm1(x)
-    x = x.permute(0, 2, 3, 1)
-\end{lstlisting}
+In order to improve the performance the number of normalization layers in ConvNeXt is minimized to one at each block.
+We tested a model with three BatchNorm layers, as it is used in ResNet.
+The only challenging part there is the calculation of the correct number of dimensions at each position in the model respectively.
+To use the BatchNorm layers we surrounded them by permutation functions to have the dataflow in correct shape.
+The result looks like this for each added normalization layer (just with different factors for the dimensions in the initialization, as the dimensions are dependent of the position in the model):
 
-Perhaps because of these measures, the training time enlarged by far to a time of 03:41 minutes per epoch on our test environment. the results though drastically improved to a performance of 79.4\%.
+\begin{python}
+# in the constructor
+# initialize BatchNorm Layer
+self.std_norm1 = nn.BatchNorm2(inverted_bottleneck * dim)
+
+# in the forward method
+x = x.permute(0, 3, 1, 2)
+x = self.std_norm1(x)
+x = x.permute(0, 2, 3, 1)
+\end{python}
+
+
+Perhaps because of these measures, the training time enlarged by far to a time of 03:41 minutes per epoch on our test environment.
+the results though drastically improved to a performance of 79.4\%.
 on a gtx 3060: 0:03:41 per epoch, 4:34:34 at all.
 
 ResNeXtify
-The process of resnextifying includes transforming key features of the network, which make ConvNeXt to what it is. Furthermore, many steps are related and depending on these changes. As reverting these would rather be part of investigating ResNeXt, we kept those reverts untouched.
+The process of resnextifying includes transforming key features of the network, which make ConvNeXt to what it is.
+Furthermore, many steps are related and depending on these changes.
+As reverting these would rather be part of investigating ResNeXt, we kept those reverts untouched.
 
 Separate downsampling layers
-Downsampling is done by convolution layers of kernel size 3x3 in ResNet, and 2x2 in Swin Transformers. ConvNeXt got an improved accuracy with a kernel Size of 2x2 as a consequence, we tested an enlarged kernel size on our dataset. As done in reverts before, we added an parameter (\texttt{downsample\_kernel\_size}) to the \texttt{create\_model} function and changed the line for the downsampling conv layers.
-\begin{lstlisting}{Name}
-    nn.Conv2d(dims[i], dims[i + 1], 
-        kernel_size=downsample_kernel_size, stride=2)
-\end{lstlisting}
+Downsampling is done by convolution layers of kernel size 3x3 in ResNet, and 2x2 in Swin Transformers.
+ConvNeXt got an improved accuracy with a kernel Size of 2x2 as a consequence, we tested an enlarged kernel size on our dataset.
+As done in reverts before, we added an parameter (\texttt{downsample\_kernel\_size}) to the \texttt{create\_model} function and changed the line for the downsampling conv layers.
+
+\begin{python}
+nn.Conv2d(dims[i], dims[i + 1],
+    kernel_size=downsample_kernel_size, stride=2)
+\end{python}
 
 % vlt: kernel size und block layout /figure 3 und inverted bottleneck
 % more activation functions
