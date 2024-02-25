@@ -79,6 +79,14 @@
 
 \section{Introduction}\label{sec:introduction}
 In this proseminar we have been tasked with familiarizing ourselves with an existing implementation of a neural network architecture.
+The network in question is the ConvNeXt architecture developed by \textit{facebookresearch} and published in 2022.
+In the associated paper the authors present their methodology and design decisions.
+While the authors get interesting results, they only apply to the ImageNet1k dataset.
+Therefore, to truly understand the architecture and see how well it works with another dataset we experimented with using the CIFAR10 dataset.
+
+This report first summarizes the key aspects presented in the ConvNeXt paper as well as presents the experiments we did using the implementation.
+These experiments can be grouped into three categories that are data augmentation, finetuning and reverting network structures.
+Finally, in the end we will draw conclusions about our findings.
 
 \section{ConvNeXt}\label{sec:convnext}
 % summarize the key aspects of the paper, 1 - 1.5p
@@ -407,6 +415,18 @@ nn.Conv2d(dims[i], dims[i + 1],
 % ln -> bn: layer norm mit bn in block ersetzt und im forward das permute erst nach der norm gemacht
 
 \section{Conclusion}\label{sec:conclusion}
+The most surprising result from our experiments is the very high performance of finetuning.
+Even if we just used the smallest network size with arbitrary hyperparameter choices and the smallest pretrained network, our performance was in the mid-nineties.
+With the optimal choices we found it was close to 99\%.
+
+Unfortunately, just using the network to train from scratch gives only acceptable performance even when using the insights we gained from experimenting with data augmentation.
+Additionally, some reverts to the network architecture significantly improve the performance of the network.
+Therefore, our findings in the network reversion chapters lead us to conclude that the choices made by the authors of the architecture only benefit the performance when using ImageNet1k.
+
+However, one thing we did not experiment much on was the choice of hyperparameters.
+Seeing the impact just the one configuration had, we conjecture that there could have been an even better configuration with much better results.
+Unfortunately, we did not have the time to investigate this hunch further as our goal to reduce training time in the data augmentation chapter did not come to fruition.
+Nonetheless, fidgeting with the way the images are transformed still proved valuable as we could significantly improve the network performance when using particular settings.
 % could have played around more with hyperparameters
 % Marcel: higher acc if changing back some parameters -> paper just optimized on specific dataset?
 % Marcel: some optimizations could be reproduced, maybe more tests on different datasets necessary to improve acc in general?
