@@ -361,12 +361,12 @@ The performance of the network significantly shot up to an impressive 76\% (\tex
 Kernel Size
 
 The kernel size of the ConvNeXt network is per standard larger than in most other ConvNets.
-We decreased the number from 7x7 back to the gold standard of 4x4, by adjusting the responsive parameter in the depthwise conv layer in the ConvNeXt blocks.
+We decreased the number from 7x7 back to the gold standard of 3x3, by adjusting the responsive parameter in the depthwise conv layer in the ConvNeXt blocks.
 \begin{python}
-    self.dwconv = nn.Conv2d(dim, dim,kernel_size=4, padding=3, groups=dim)
+    self.dwconv = nn.Conv2d(dim, dim,kernel_size=3, padding=3, groups=dim)
 \end{python}
 
-With this change we achieved an maximum accuracy of 70.7\% so just slightly below the accuracy with larger kernels, which matches the Observations of the paper.
+With this change we achieved an maximum accuracy of 73.0\% so just slightly below the accuracy with larger kernels, which matches the Observations of the paper.
 
 
 Activation Functions
