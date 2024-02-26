@@ -326,7 +326,7 @@ The resulting network performance is slightly lower than the baseline (\texttt{r
 
 \textbf{From LN to BN.} %
 The next change was reverting from their custom implementation of layer normalization to batch normalization.
-This was also not too difficult and we just exchanged the definition of the norm in the Block class with the PyTorch inbuilt BatchNorm.
+This was also not too difficult, and we just exchanged the definition of the norm in the Block class with the PyTorch inbuilt BatchNorm.
 Additionally, in the forward method the normalization and the first permutation swapped places.
 The performance of the network significantly shot up to an impressive 76\% (\texttt{bn-replaces-ln}).
 
@@ -375,7 +375,7 @@ x = self.std_norm1(x)
 x = x.permute(0, 2, 3, 1)
 \end{python}
 Perhaps because of these measures, the training time increased greatly, by about an hour.
-However, the perfomance drastically improved to 79.4\% (\texttt{normalization\_layers}).
+However, the performance drastically improved to 79.4\% (\texttt{normalization\_layers}).
 
 \textbf{Larger Downsampling Kernels.}
 Downsampling is done by convolution layers of kernel size 3x3 in ResNet, and 2x2 in Swin Transformers.
@@ -421,7 +421,7 @@ Nonetheless, fidgeting with the way the images are transformed still proved valu
 \subsection{Visualization and comparison of filters}\label{subsec:filter-images}
 Images of filters in the convolution layers are sometimes difficult to interpret, but still worth a glance.
 In our case we focussed on differences between a pretrained ConvNeXt tiny model and our trained-from-scratch standard model with the settings we found out to be best in our scenario.
-We also looked at differences between the models trained with our data only but with different parameters but could not find relevant differences there, which is why we wont present it here.
+We also looked at differences between the models trained with our data only but with different parameters but could not find relevant differences there, which is why we will not present it here.
 \begin{figure}[h]
     \centering
     \begin{minipage}[b]{0.49\textwidth}
