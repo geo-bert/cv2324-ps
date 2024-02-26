@@ -41,9 +41,9 @@ class Block(nn.Module):
     ):
         super().__init__()
         self.dwconv = nn.Conv2d(
-            dim, dim, kernel_size=kernel_size, padding=3, groups=dim
+            dim, dim, kernel_size=kernel_size, padding=kernel_size//2 , groups=dim
         )  # depthwise conv
-        self.norm = nn.BatchNorm2d(dim)  # LayerNorm(dim, eps=1e-6)
+        self.norm = LayerNorm(dim, eps=1e-6)
         self.pwconv1 = nn.Linear(
             dim, inverted_bottleneck * dim
         )  # pointwise/1x1 convs, implemented with linear layers
@@ -63,10 +63,10 @@ class Block(nn.Module):
     def forward(self, x):
         input = x
         x = self.dwconv(x)
-        x = self.norm(x)
         x = x.permute(
             0, 2, 3, 1
         )  # (N, C, H, W) -> (N, H, W, C), usually before first norm
+        x = self.norm(x)
         if self.add_act_fct:
             x = self.act(x)
         x = self.pwconv1(x)
