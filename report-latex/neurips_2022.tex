@@ -73,20 +73,20 @@
     The aim of this report is to investigate the ConvNeXt network architecture and its components and try it with the CIFAR10 dataset.
     For that we used an already existing implementation that was built around and evaluated on the ImageNet1k dataset.
     Therefore, we played around with the mechanisms used in the implementation such as data augmentation, finetuning and the network architecture itself.
-    What we concluded in our findings is that it works very well when using a pretrained model but only moderately well when training from scratch.
+    We concluded that it works very well using a pretrained model but only moderately well when training from scratch.
 \end{abstract}
 
 
 \section{Introduction}\label{sec:introduction}
-In this proseminar we have been tasked with familiarizing ourselves with an existing implementation of a neural network architecture.
-The network in question is the ConvNeXt architecture developed by \textit{facebookresearch} and published in 2022.
+In this proseminar we have been asked to familiarize ourselves with an existing implementation of a neural network architecture.
+The regarding network is the ConvNeXt architecture developed by \textit{facebookresearch} and published in 2022.
 In the associated paper the authors present their methodology and design decisions.
 While the authors get interesting results, they only apply to the ImageNet1k dataset.
-Therefore, to truly understand the architecture and see how well it works with another dataset we experimented with using the CIFAR10 dataset.
+Therefore, to truly understand the architecture and see how well it works with another dataset we experimented with training on the CIFAR10 dataset.
 
-This report first summarizes the key aspects presented in the ConvNeXt paper as well as presents the experiments we did using the implementation.
+This report first summarizes the key aspects presented in the ConvNeXt paper as well as the experiments we did, using the implementation.
 These experiments can be grouped into three categories that are data augmentation, finetuning and reverting network structures.
-Finally, in the end we will draw conclusions about our findings.
+Finally, we will draw conclusions from our results.
 
 \section{ConvNeXt}\label{sec:convnext}
 % summarize the key aspects of the paper, 1 - 1.5p
@@ -96,8 +96,9 @@ To achieve this, they start with a standard ResNet and modify it with techniques
 
 One of the most famous image classification models is the ResNet, using conventional convolution layers, reaching high scores in terms of accuracy and being base model for multiple other ConvNets.
 It is available in different variants, defined by the structural depth.
-For ConvNeXt both, the ResNet-50 with around 4.5e9 FLOPs and ResNet-200 having around 15e9 FLOPs are used and compared with different parameters.
-On the counterpart, looking at transformers, they originally abandon any convolutions, ConvNext implements design principles of the Swin Transformer that combines the transformers technology and convolutions, to achieve higher accuracy and comparing it to the accuracy of the standard Swin Transformer.
+For ConvNeXt both, the ResNet-50 with around 4.5e9 FLOPs and ResNet-200 having around 15e9 FLOPs are used as base model and are being compared with different parameters.
+On the counterpart, looking at transformers, they originally abandon any convolutions.
+ConvNext implements design principles of the Swin Transformer that combines the transformers technology and convolution layers, to achieve higher accuracy and comparing it to the accuracy of the standard Swin Transformer.
 The derivatives used are Swin-T and Swin-B for ResNet-50 and ResNet-200 respectively.
 Besides that, ConvNeXt uses an adapted set of training parameters like an increased number of epochs, a special set of data augmentation and the AdamW optimizer.
 
@@ -150,8 +151,8 @@ The first set was taken from the second column in Table 5 of the ConvNeXt\cite{l
 \autoref{tab:hyperparameters} shows all hyperparameters that are not set to the default values.
 We also always chose the tiny ConvNeXt model.
 What additionally differs from the setup in the paper is the dataset used.
-Instead of ImageNet1k all our training runs are based on the CIFAR10\cite{krizhevsky2009learning} dataset reduced to 10\% of its original size.
-Also, the implementation uses a fixed seed, therefore the results should be deterministic and reproducible.
+Instead of ImageNet1k, all our training runs are based on the CIFAR10\cite{krizhevsky2009learning} dataset reduced to 10\% of its original size.
+Also, the implementation uses a fixed seed, therefore the results are deterministic and reproducible.
 The networks were trained on three different machines, which roughly took the same magnitudes for training.
 These are an Nvidia RTX 3070, an Nvidia RTX 3060 mobile, and the opaque Google Colab T4 GPU\@.
 Both the ConvNeXt implementation and CIFAR10 use the MIT license.
@@ -212,9 +213,9 @@ The testing accuracy curves of the different configurations can be seen in \auto
 
 With a baseline of about 65\% accuracy established we can now start to experiment with the image transforms.
 We did this by removing it entirely and reintroducing it in steps with minimal changes in the codebase.
-One was always necessary, that being the \texttt{ToTensor()} transform as otherwise the training would not even work.
-The result was very fast, taking about only five minutes, but had abysmal performance (\texttt{only-totensor}).
-This was very suspicious, and we came to find that the testing procedure used different transforms that include a resize.
+The only thing remaining was the \texttt{ToTensor()} transform as without the training would not even work.
+The result was very fast, taking about only five minutes (with the RTX 3070), but had abysmal performance (\texttt{only-totensor}).
+This was very suspicious, and we came to find that the testing procedure used different transforms including a resize.
 Therefore, we trained the network on 32 by 32 images and tested it on 224 by 224 images.
 Using the \texttt{input\_size} command line argument we can change this behaviour to also testing on the proper image size.
 Still, the accuracy (\texttt{only-totensor\_input-is-32}) is very bad.
@@ -233,9 +234,9 @@ The relevant options one can disable via passing arguments to the model is color
 Other modifications like horizontal flipping and random cropping cannot be disabled without tampering with the code.
 Because the documentation of the arguments was so poor in our next test we only managed to disable color jitter, which we found out is always disabled as long as any auto augmentation was done, and random erasure.
 We only managed to change the default Random Augment to Auto Augment using the Auto Augment flag.
-To our surprise, this configuration (\texttt{cli-augment-off-but-aa}) gave better results than the example parameters whilst also needing half an hour less to train.
-The final configuration we tested was to properly disable the auto augmentation as well (\texttt{cli-augment-off}).
-The results were also better than the example parameters, but slightly worse than the prior configuration while having no change in training time.
+Surprisingly, this configuration (\texttt{cli-augment-off-but-aa}) gave better results than the example parameters whilst also needing half an hour less to train.
+The final configuration we tested was to properly disable the auto augmentation (\texttt{cli-augment-off}).
+The results were also better than with the example parameters, but slightly worse than the prior configuration while having no change in training time.
 
 The conclusion of these experiments was that we can improve the performance of training from scratch by varying the command line arguments but not the training time.
 Hence, in the coming chapters we will use it in tandem with the example parameter configuration for testing when wanting to squeeze out a bit more performance.
@@ -294,10 +295,10 @@ This netted us a very formidable performance of 98\% (\texttt{best-finetune}).
 But also took as long to train as a normal network for 100 epochs with only 10\% of the data.
 Spurred on by this promising number we also tried and increased the number of epochs trained to 20, but the overall performance stayed about the same even though the training took twice as long (\texttt{best-finetune-20ep}).
 
-Having obtained a satisfying enough performance and configuration, we turned our attention to understanding the underlying mechanism of finetuning in this implementation.
+Having obtained a satisfying performance and configuration, we turned our attention to understanding the underlying mechanism of finetuning in this implementation.
 Differing from the way it was presented in the lecture, which froze all weights except for the last layer, all parameters are adjusted during the finetuning training.
 What they do is create the model specified by the user, in our case the tiny version, load the state dictionary of the pretrained model and override all weights and biases in each layer that has the same shape.
-Meaning, because we used the tiny pretrained model, the only weights and biases not loaded and kept uninitialized were that of the final classification layer.
+Meaning, because we used the tiny pretrained model, the only weights and biases not loaded and kept uninitialized were those of the final classification layer.
 
 \subsection{Network Reversion}\label{subsec:network-reversion}
 The final focus of experimenting with this implementation was trying to revert individual changes made by the authors to the initial ResNet-50.
@@ -334,45 +335,45 @@ The performance of the network significantly shot up to an impressive 76\% (\tex
 The kernel size of the ConvNeXt network is per standard larger than in most other ConvNets.
 We decreased the number from 7x7 back to the gold standard of 3x3, by adjusting the responsive parameter in the depthwise conv layer in the ConvNeXt blocks.
 \begin{python}
-self.dwconv = nn.Conv2d(dim, dim,kernel_size=3, padding=3, groups=dim)
+    self.dwconv = nn.Conv2d(dim, dim,kernel_size=3, padding=3, groups=dim)
 \end{python}
-With this change we achieved a maximum accuracy of 72.3\% so just a bit below the accuracy than that with larger kernels, which matches the Observations of the paper (\texttt{kernel\_size}).
+With this change we achieved a maximum accuracy of 72.3\% so just a bit below the accuracy we had with larger kernels, which matches the observations of the paper (\texttt{kernel\_size}).
 
 \textbf{More Activation Functions.} %
 In ConvNeXt, the ReLU activation functions of e.g.\ ResNeXt are replaced with GELU functions.
 Furthermore, the authors reduced the number of activation functions to one per block.
-To revert this change, we added two GELU function in each block such that there are three activation functions at all, one after the first two Conv Layers respectively and one at the end of each block (same as in the ResNet Block in figure 4 in the paper, just with GELU functions).
+To revert this change, we added two GELU functions in each block such that there are three activation functions at all, one after the first two Conv Layers respectively and one at the end of each block (same as in the ResNet Block in figure 4 in the paper, just with GELU functions).
 As a result we got a much higher accuracy of 80.3\% (\texttt{more\_activation\_functions}).
 The training time per epoch stayed the same.
-In an earlier tests without the normalization layer at the end of the block, the resulted accuracy was still increasing, but not that much (71.8\%) (\texttt{more\_activation\_functions2}).
+In earlier tests without the normalization layer at the end of the block, the resulted accuracy was still increasing, but not that much (71.8\%) (\texttt{more\_activation\_functions2}).
 
 \textbf{Inverted Bottleneck.} %
-The principle of the inverted bottleneck is improving the result in the ConvNeXt paper by 0.7\%.
+Using the principle of the inverted bottleneck is improving the result in the ConvNeXt paper by 0.7\%.
 Instead of reducing the dimensions within a block, the dimensions are increased by a factor of four between the second and third Convolution Layer.
 To revert this, we added a parameter \texttt{inverted\_bottleneck}
 to be able to manipulate the factor and set it to one.
 \begin{python}
-# pointwise convolutions in the constructor of the block class
-self.pwconv1 = nn.Linear(dim, inverted_bottleneck * dim)
-self.pwconv2 = nn.Linear(inverted_bottleneck * dim, dim)
+    # pointwise convolutions in the constructor of the block class
+    self.pwconv1 = nn.Linear(dim, inverted_bottleneck * dim)
+    self.pwconv2 = nn.Linear(inverted_bottleneck * dim, dim)
 \end{python}
 The result was in fact a significant lower accuracy of 68.1\% (\texttt{inverted-bottleneck}).
 
 \textbf{Normalization Layers.}
 In order to improve the performance, the number of normalization layers in ConvNeXt is minimized to one at each block.
 We tested a model with three BatchNorm layers, as it is used in ResNet.
-The only challenging part there is the calculation of the correct number of dimensions at each position in the model respectively.
-To use the BatchNorm layers we surrounded them by permutation functions to have the dataflow in the correct shape.
+The only challenging part implementing this, is the calculation of the correct number of dimensions at each position in the model respectively.
+To use the BatchNorm layers we surrounded them by permutation functions to have the vectors in the correct shape.
 The result looks like this for each added normalization layer (just with different factors for the dimensions in the initialization, as the dimensions are dependent of the position in the model):
 \begin{python}
-# in the constructor
-# initialize BatchNorm Layer
-self.std_norm1 = nn.BatchNorm2(inverted_bottleneck * dim)
+    # in the constructor
+    # initialize BatchNorm Layer
+    self.std_norm1 = nn.BatchNorm2(inverted_bottleneck * dim)
 
-# in the forward method
-x = x.permute(0, 3, 1, 2)
-x = self.std_norm1(x)
-x = x.permute(0, 2, 3, 1)
+    # in the forward method
+    x = x.permute(0, 3, 1, 2)
+    x = self.std_norm1(x)
+    x = x.permute(0, 2, 3, 1)
 \end{python}
 Perhaps because of these measures, the training time increased greatly, by about an hour.
 However, the performance drastically improved to 79.4\% (\texttt{normalization\_layers}).
@@ -382,8 +383,8 @@ Downsampling is done by convolution layers of kernel size 3x3 in ResNet, and 2x2
 ConvNeXt got an improved accuracy with a kernel Size of 2x2 as a consequence, we tested a larger kernel size on our dataset.
 As done in reverts before, we added a parameter (\texttt{downsample\_kernel\_size}) to the \texttt{create\_model} function and changed the line for the downsampling conv layers.
 \begin{python}
-nn.Conv2d(dims[i], dims[i + 1],
-        kernel_size=downsample_kernel_size, stride=2)
+    nn.Conv2d(dims[i], dims[i + 1],
+    kernel_size=downsample_kernel_size, stride=2)
 \end{python}
 After the training with extended kernel sizes in the downsampling layer, our accuracy went up to 79.2\% (\texttt{downsampling-layers}).
 
@@ -401,14 +402,14 @@ The most surprising result from our experiments is the very high performance of 
 Even if we just used the smallest network size with arbitrary hyperparameter choices and the smallest pretrained network, our performance was in the mid-nineties.
 With the optimal choices we found it was close to 99\%.
 
-Unfortunately, just using the network to train from scratch gives only acceptable performance even when using the insights we gained from experimenting with data augmentation.
+Unfortunately, just using the network to train from scratch only gives acceptable performance, even when using the insights we gained from experimenting with data augmentation.
 Additionally, some reverts to the network architecture significantly improve the performance of the network.
 Therefore, our findings in the network reversion chapters lead us to conclude that the choices made by the authors of the architecture only benefit the performance when using ImageNet1k.
 
 However, one thing we did not experiment much on was the choice of hyperparameters.
 Seeing the impact just the one configuration had, we conjecture that there could have been an even better configuration with much better results.
-Unfortunately, we did not have the time to investigate this hunch further as our goal to reduce training time in the data augmentation chapter did not come to fruition.
-Nonetheless, fidgeting with the way the images are transformed still proved valuable as we could significantly improve the network performance when using particular settings.
+Unfortunately, we did not have the time to investigate this much further as our goal to reduce training time in the data augmentation chapter did not come to fruition.
+Nonetheless, experimenting with the way the images are transformed still proved valuable as we could significantly improve the network performance when using particular settings.
 % could have played around more with hyperparameters
 % Marcel: higher acc if changing back some parameters -> paper just optimized on specific dataset?
 % Marcel: some optimizations could be reproduced, maybe more tests on different datasets necessary to improve acc in general?
