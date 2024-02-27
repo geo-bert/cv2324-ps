@@ -70,10 +70,10 @@
 
 
 \begin{abstract}
-    The aim of this report is to investigate the ConvNeXt network architecture and its components and try it with the CIFAR10 dataset.
+    The aim of this report is to investigate the ConvNeXt network architecture and its components, and try it with the CIFAR10 dataset.
     For that we used an already existing implementation that was built around and evaluated on the ImageNet1k dataset.
     Therefore, we played around with the mechanisms used in the implementation such as data augmentation, finetuning and the network architecture itself.
-    We concluded that it works very well using a pretrained model but only moderately well when training from scratch.
+    We concluded that it works very well when using a pretrained model but only moderately well when training from scratch.
 \end{abstract}
 
 
@@ -92,11 +92,11 @@ Finally, we will draw conclusions from our results.
 % summarize the key aspects of the paper, 1 - 1.5p
 ConvNeXt\cite{liu2022convnet} is the label for a machine learning project of Liu, Mao et al., regarding image classification.
 It is supposed to show an alternative to the in machine learning science currently mainly focussed vision transformers.
-To achieve this, they start with a standard ResNet and modify it with techniques used or developed in vision transformers and optimize training and model parameters in respect to maximum accuracy.
+To achieve this, they start with a standard ResNet and modify it with techniques used or developed in vision transformers and optimize training and model parameters with respect to maximum accuracy.
 
 One of the most famous image classification models is the ResNet, using conventional convolution layers, reaching high scores in terms of accuracy and being base model for multiple other ConvNets.
 It is available in different variants, defined by the structural depth.
-For ConvNeXt both, the ResNet-50 with around 4.5e9 FLOPs and ResNet-200 having around 15e9 FLOPs are used as base model and are being compared with different parameters.
+For ConvNeXt both, the ResNet-50 with around 4.5e9 FLOPs and ResNet-200 having around 15e9 FLOPs are used as a base model and are being compared with different parameters.
 On the counterpart, looking at transformers, they originally abandon any convolutions.
 ConvNext implements design principles of the Swin Transformer that combines the transformers technology and convolution layers, to achieve higher accuracy and comparing it to the accuracy of the standard Swin Transformer.
 The derivatives used are Swin-T and Swin-B for ResNet-50 and ResNet-200 respectively.
@@ -177,17 +177,17 @@ To allow for an improved workflow for testing we chose to make some minor change
 This was done to not only ensure faster training times, but also for a more lenient experience when having to set up the environment.
 
 The first and only change that meddles with the actual implementation was to add another command line argument to allow for down-sampling CIFAR10.
-For this we registered a \texttt{--downsample} argument to the used argparser that is then used in the \verb|build_dataset| function in the \texttt{dataset.py} file.
+For this we registered a \verb|--downsample| argument to the used argparser that is then used in the \verb|build_dataset| function in the \texttt{dataset.py} file.
 The implementation for the usage can be seen in~\ref{fig:downsampling}.
 Instead of choosing a random subset we choose every $n$th element, where $n$ is the down-sampling factor.
 Additionally, for transparency, the original codebase used CIFAR100, but we chose to change it to CIFAR10.
 \begin{figure}[h]
     \begin{python}
-        dataset = datasets.CIFAR10(args.data_path, train=is_train,
-        transform=transform, download=True)
-        sample = list(range(0, len(dataset), args.downsample))
-        dataset = torch.utils.data.Subset(dataset, sample)
-        nb_classes = 10
+dataset = datasets.CIFAR10(args.data_path, train=is_train,
+                            transform=transform, download=True)
+sample = list(range(0, len(dataset), args.downsample))
+dataset = torch.utils.data.Subset(dataset, sample)
+nb_classes = 10
     \end{python}
     \caption{Downsampling the dataset.}
     \label{fig:downsampling}
@@ -229,8 +229,8 @@ In a final step before the classification global average pooling is applied that
 Next, we introduced normalization which only minimally impacted training time, but increased the performance by another 10\% (\texttt{normalize\_input-is-32}).
 This was still too bad for us to consider as a worth tradeoff, hence we introduced the resizing back to 224 by 224 pixel images (\texttt{resize}).
 The resizing pushed our training time back into more than one hour but achieved performance comparable to the paper parameters.
-However, this was still not satisfactory performance wise, and therefore we moved on to playing with the command line arguments for the transforms, as introducing other transforms would modify the codebase too much.
-The relevant options one can disable via passing arguments to the model is color jitter, auto augmentation and random erasure.
+However, this was still not satisfactory performance wise, and therefore we moved on to playing with the command line arguments for the transforms, as introducing other transforms by hand would modify the codebase too much.
+The relevant options one can disable via passing arguments to the model are color jitter, auto augmentation and random erasure.
 Other modifications like horizontal flipping and random cropping cannot be disabled without tampering with the code.
 Because the documentation of the arguments was so poor in our next test we only managed to disable color jitter, which we found out is always disabled as long as any auto augmentation was done, and random erasure.
 We only managed to change the default Random Augment to Auto Augment using the Auto Augment flag.
@@ -274,7 +274,7 @@ The results for our finetuning can be seen in \autoref{fig:finetuning} and the c
 
 For our finetuning instead of training for 100 epochs, we only trained for 10, except in one case.
 We always chose the example parameters and fine-tuned the pretrained ConvNeXt-T for ImageNet-1K model\cite{repository}.
-Finetuning can be initiated by specifying a reference to a pretrained model, in our case a link, as a command line parameter with the \texttt{--finetune} option.
+Finetuning can be initiated by specifying a reference to a pretrained model, in our case a link, as a command line parameter with the \verb|--finetune| option.
 
 We did three different sets of tests when it came to finetuning in order to squeeze out performance.
 None of these included varying any hyperparameter, other than our first test with different batch sizes.
@@ -335,7 +335,7 @@ The performance of the network significantly shot up to an impressive 76\% (\tex
 The kernel size of the ConvNeXt network is per standard larger than in most other ConvNets.
 We decreased the number from 7x7 back to the gold standard of 3x3, by adjusting the responsive parameter in the depthwise conv layer in the ConvNeXt blocks.
 \begin{python}
-    self.dwconv = nn.Conv2d(dim, dim,kernel_size=3, padding=3, groups=dim)
+self.dwconv = nn.Conv2d(dim, dim,kernel_size=3, padding=3, groups=dim)
 \end{python}
 With this change we achieved a maximum accuracy of 72.3\% so just a bit below the accuracy we had with larger kernels, which matches the observations of the paper (\texttt{kernel\_size}).
 
@@ -353,9 +353,9 @@ Instead of reducing the dimensions within a block, the dimensions are increased 
 To revert this, we added a parameter \texttt{inverted\_bottleneck}
 to be able to manipulate the factor and set it to one.
 \begin{python}
-    # pointwise convolutions in the constructor of the block class
-    self.pwconv1 = nn.Linear(dim, inverted_bottleneck * dim)
-    self.pwconv2 = nn.Linear(inverted_bottleneck * dim, dim)
+# pointwise convolutions in the constructor of the block class
+self.pwconv1 = nn.Linear(dim, inverted_bottleneck * dim)
+self.pwconv2 = nn.Linear(inverted_bottleneck * dim, dim)
 \end{python}
 The result was in fact a significant lower accuracy of 68.1\% (\texttt{inverted-bottleneck}).
 
@@ -366,14 +366,14 @@ The only challenging part implementing this, is the calculation of the correct n
 To use the BatchNorm layers we surrounded them by permutation functions to have the vectors in the correct shape.
 The result looks like this for each added normalization layer (just with different factors for the dimensions in the initialization, as the dimensions are dependent of the position in the model):
 \begin{python}
-    # in the constructor
-    # initialize BatchNorm Layer
-    self.std_norm1 = nn.BatchNorm2(inverted_bottleneck * dim)
+# in the constructor
+# initialize BatchNorm Layer
+self.std_norm1 = nn.BatchNorm2(inverted_bottleneck * dim)
 
-    # in the forward method
-    x = x.permute(0, 3, 1, 2)
-    x = self.std_norm1(x)
-    x = x.permute(0, 2, 3, 1)
+# in the forward method
+x = x.permute(0, 3, 1, 2)
+x = self.std_norm1(x)
+x = x.permute(0, 2, 3, 1)
 \end{python}
 Perhaps because of these measures, the training time increased greatly, by about an hour.
 However, the performance drastically improved to 79.4\% (\texttt{normalization\_layers}).
@@ -383,8 +383,8 @@ Downsampling is done by convolution layers of kernel size 3x3 in ResNet, and 2x2
 ConvNeXt got an improved accuracy with a kernel Size of 2x2 as a consequence, we tested a larger kernel size on our dataset.
 As done in reverts before, we added a parameter (\texttt{downsample\_kernel\_size}) to the \texttt{create\_model} function and changed the line for the downsampling conv layers.
 \begin{python}
-    nn.Conv2d(dims[i], dims[i + 1],
-    kernel_size=downsample_kernel_size, stride=2)
+nn.Conv2d(dims[i], dims[i + 1],
+kernel_size=downsample_kernel_size, stride=2)
 \end{python}
 After the training with extended kernel sizes in the downsampling layer, our accuracy went up to 79.2\% (\texttt{downsampling-layers}).
 
